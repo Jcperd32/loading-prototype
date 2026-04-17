@@ -2,419 +2,591 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Alice's Cleaning - Water Fill Preloader</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Elegant Cleanse | Professional Loading Screen</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        :root {
-            --olive-dark: #5a6f4a;
-            --olive-medium: #7a9063;
-            --olive-light: #a8ba94;
-            --cream: #f5f3ef;
-            --brown-accent: #8b7355;
-            --water-dark: #4a6e3a;
-            --water-light: #8fc070;
-            --white: #fefefe;
+            user-select: none; /* Prevents accidental selection on animation */
         }
 
         body {
-            font-family: 'Lato', 'Segoe UI', system-ui, sans-serif;
-            background: linear-gradient(135deg, var(--cream) 0%, #e8e4dc 100%);
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, 'Poppins', 'Helvetica Neue', sans-serif;
+            background: #f3efe5;  /* soft creamy base */
         }
 
-        .preloader {
+        /* MAIN LOADING SCREEN CONTAINER */
+        .loading-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #f0ede7 0%, #e2ddd2 100%);
+            background: linear-gradient(135deg, #eef0e0 0%, #dbe3ce 100%);
+            /* soft light green to olive undertone cream */
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s ease;
+            z-index: 1000;
+            transition: opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+            backdrop-filter: blur(0px);
         }
 
-        .preloader.hide {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        .water-text-container {
-            text-align: center;
-            padding: 2rem;
-            max-width: 95vw;
-            margin: 0 auto;
-        }
-
-        .water-fill-text {
-            font-family: 'Cormorant Garamond', 'Georgia', serif;
-            font-size: clamp(3rem, 12vw, 6.5rem);
-            font-weight: 700;
-            letter-spacing: 0.02em;
-            background: linear-gradient(
-                to bottom,
-                var(--water-dark) 0%,
-                var(--water-light) 35%,
-                #c2e0a8 65%,
-                #daf0c0 100%
-            );
-            background-size: 100% 200%;
-            background-repeat: no-repeat;
-            background-position: 0% 100%;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            display: inline-block;
-            transition: opacity 0.6s ease-out;
-        }
-
-        .water-fill-text.fade-out {
-            opacity: 0;
-        }
-
-        .wave-overlay {
-            position: relative;
-            display: inline-block;
-        }
-
-        .wave-overlay::before {
-            content: attr(data-text);
+        /* subtle texture overlay for refinement */
+        .loading-screen::before {
+            content: "";
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            font-family: 'Cormorant Garamond', 'Georgia', serif;
-            font-size: clamp(3rem, 12vw, 6.5rem);
-            font-weight: 700;
-            background: repeating-linear-gradient(
-                transparent 0px,
-                transparent 3px,
-                rgba(80, 110, 60, 0.2) 3px,
-                rgba(80, 110, 60, 0.2) 8px
-            );
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            background-image: radial-gradient(#cbd8b0 0.8px, transparent 0.8px);
+            background-size: 28px 28px;
+            opacity: 0.2;
             pointer-events: none;
-            z-index: 2;
-            animation: waveShift 1.2s infinite ease-in-out;
         }
 
-        @keyframes waveShift {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(3px); }
-            100% { transform: translateY(0px); }
+        /* CARD-LIKE ANIMATION ZONE */
+        .animation-stage {
+            background: rgba(250, 248, 240, 0.65);
+            backdrop-filter: blur(2px);
+            border-radius: 64px;
+            padding: 2rem 3rem;
+            box-shadow: 0 20px 35px -12px rgba(60, 45, 30, 0.12), 0 1px 3px rgba(0,0,0,0.02);
+            border: 1px solid rgba(215, 205, 175, 0.5);
+            margin-bottom: 2.5rem;
         }
 
-        .water-bubbles {
-            margin-top: 2rem;
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-            opacity: 0.6;
-        }
-
-        .bubble {
-            width: 8px;
-            height: 8px;
-            background: var(--water-light);
-            border-radius: 50%;
-            animation: bubbleFloat 2s infinite ease-in-out;
-        }
-
-        .bubble:nth-child(2) { width: 12px; height: 12px; animation-delay: 0.3s; background: #8bb36b; }
-        .bubble:nth-child(3) { width: 6px; height: 6px; animation-delay: 0.7s; }
-        .bubble:nth-child(4) { width: 10px; height: 10px; animation-delay: 0.2s; }
-        .bubble:nth-child(5) { width: 14px; height: 14px; animation-delay: 0.5s; background: #6e9558; }
-
-        @keyframes bubbleFloat {
-            0% { transform: translateY(0px) scale(1); opacity: 0.4; }
-            50% { transform: translateY(-15px) scale(1.1); opacity: 0.9; }
-            100% { transform: translateY(0px) scale(1); opacity: 0.4; }
-        }
-
-        .main-content {
-            max-width: 1200px;
+        /* CANVAS where tools morph */
+        .morph-canvas {
+            width: 280px;
+            height: 280px;
+            display: block;
             margin: 0 auto;
-            padding: 3rem 2rem;
-            text-align: center;
-            opacity: 0;
-            transform: scale(0.96);
-            transition: opacity 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1), transform 0.7s ease;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            filter: drop-shadow(0 8px 12px rgba(70, 60, 40, 0.1));
         }
 
-        .main-content.visible {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .welcome-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            border-radius: 48px;
-            padding: 3rem 2rem;
-            box-shadow: 0 25px 50px rgba(90, 111, 74, 0.2);
-            border: 1px solid rgba(122, 144, 99, 0.3);
-        }
-
-        h1 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 3rem;
-            color: var(--olive-dark);
-            margin-bottom: 1rem;
-        }
-
-        .brand-icon {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-        }
-
-        p {
-            color: #3d4936;
-            font-size: 1.2rem;
-            line-height: 1.6;
-            max-width: 600px;
-            margin: 1rem auto;
-        }
-
-        .eco-badge {
-            display: flex;
-            gap: 1.5rem;
-            justify-content: center;
-            margin: 2rem 0;
-            flex-wrap: wrap;
-        }
-
-        .badge {
-            background: rgba(122, 144, 99, 0.15);
-            padding: 0.5rem 1.2rem;
-            border-radius: 60px;
-            font-size: 0.9rem;
-            color: var(--olive-dark);
-            font-weight: 600;
-        }
-
-        button {
-            background: linear-gradient(135deg, var(--olive-medium), var(--olive-dark));
-            border: none;
-            padding: 0.9rem 2rem;
-            border-radius: 60px;
-            color: white;
-            font-weight: bold;
+        /* subtle caption / loading text */
+        .loading-caption {
+            margin-top: 2rem;
+            font-weight: 450;
+            letter-spacing: 0.3px;
             font-size: 1rem;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-top: 1rem;
+            color: #5c6048;
+            background: rgba(245, 242, 232, 0.7);
+            backdrop-filter: blur(4px);
+            padding: 0.5rem 1.5rem;
+            border-radius: 60px;
+            border: 0.5px solid #dad1ba;
+            font-family: inherit;
         }
 
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(90, 111, 74, 0.3);
+        .loading-caption span {
+            font-weight: 500;
+            color: #5f6b3c;
         }
 
-        .footer-note {
-            margin-top: 3rem;
+        /* progress bar - minimalist, elegant */
+        .progress-container {
+            width: 240px;
+            margin-top: 1.8rem;
+            background: #e2decb;
+            border-radius: 100px;
+            height: 4px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: #83945e;
+            border-radius: 100px;
+            transition: width 0.25s linear;
+        }
+
+        /* loading percentage */
+        .percent-text {
+            margin-top: 0.6rem;
             font-size: 0.8rem;
-            opacity: 0.6;
+            font-weight: 500;
+            color: #7c8262;
+            letter-spacing: 0.5px;
         }
 
-        @media (max-width: 640px) {
-            .welcome-card {
-                padding: 2rem 1.2rem;
+        /* professional subtle brand line */
+        .brand-note {
+            position: absolute;
+            bottom: 28px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #b0aa8b;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        /* content that appears after loading (hidden initially) */
+        .main-content {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s ease 0.1s;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f9f7f0;
+        }
+
+        .demo-card {
+            background: white;
+            max-width: 500px;
+            padding: 2.8rem;
+            border-radius: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05);
+            border: 1px solid #e9e2cf;
+        }
+
+        .demo-card h2 {
+            font-weight: 500;
+            color: #6e7b4a;
+            margin-bottom: 0.75rem;
+        }
+
+        .demo-card p {
+            color: #8e927a;
+            line-height: 1.5;
+        }
+
+        /* responsive */
+        @media (max-width: 550px) {
+            .animation-stage {
+                padding: 1rem 2rem;
             }
-            h1 {
-                font-size: 2rem;
-            }
-            p {
-                font-size: 1rem;
-            }
-            .badge {
-                font-size: 0.75rem;
-            }
-            .water-fill-text {
-                letter-spacing: normal;
+            .morph-canvas {
+                width: 220px;
+                height: 220px;
             }
         }
     </style>
 </head>
 <body>
 
-<div class="preloader" id="preloader">
-    <div class="water-text-container">
-        <div class="wave-overlay" data-text="Alice's Cleaning">
-            <div class="water-fill-text" id="waterText">Alice's Cleaning</div>
-        </div>
-        <div class="water-bubbles">
-            <div class="bubble"></div>
-            <div class="bubble"></div>
-            <div class="bubble"></div>
-            <div class="bubble"></div>
-            <div class="bubble"></div>
-        </div>
+<div class="loading-screen" id="loadingScreen">
+    <div class="animation-stage">
+        <canvas id="toolCanvas" class="morph-canvas" width="300" height="300" style="width:100%; max-width:300px; height:auto; aspect-ratio:1/1"></canvas>
     </div>
+    <div class="loading-caption">
+        ✨ <span>preparing essentials</span> ✨
+    </div>
+    <div class="progress-container">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="percent-text" id="percentLabel">0%</div>
+    <div class="brand-note">clean flow · professional morphing sequence</div>
 </div>
 
 <div class="main-content" id="mainContent">
-    <div class="welcome-card">
-        <div class="brand-icon">🏡💧🌿</div>
-        <h1>Welcome to Alice's Eco House Cleaning</h1>
-        <p>Your home, naturally radiant. 100% plant-based cleaning with love. We bring nature's best to your doorstep.</p>
-        <div class="eco-badge">
-            <span class="badge">🌱 100% Natural</span>
-            <span class="badge">🧼 Professional Care</span>
-            <span class="badge">✨ Trusted Since 2016</span>
-        </div>
-        <button id="replayBtn">💧 Replay Water Fill Animation</button>
-        <div class="footer-note">Hamptons & surrounding areas | Eco-friendly promise</div>
+    <div class="demo-card">
+        <h2>✨ spotless journey ✨</h2>
+        <p>Your cleaning tools are ready.<br>Broom · Mop · Vacuum · Duster · Squeegee — seamless transition.<br><br> <span style="font-size:0.85rem; color:#b7b78a;">professional loading complete</span></p>
     </div>
 </div>
 
 <script>
-(function() {
-    const preloader = document.getElementById('preloader');
-    const mainContent = document.getElementById('mainContent');
-    const waterTextEl = document.getElementById('waterText');
-    
-    let animationFrameId = null;
-    let isComplete = false;
-    
-    function setWaterFill(percent) {
-        const positionY = 100 - percent;
-        waterTextEl.style.backgroundPosition = `0% ${positionY}%`;
+    (function(){
+        // --------------------------------------------------------------
+        // PROFESSIONAL MORPHING SEQUENCE: BROOM -> MOP -> VACUUM -> DUSTER -> SQUEEGEE
+        // using canvas vector-like path interpolation (custom shapes)
+        // each tool is represented as a set of control points & we morph weights.
+        // To achieve high quality & detailed morph, we use a hybrid approach:
+        // Each tool defines key features (paths). We'll do shape tween between 2 consecutive tools.
+        // But since we need 5 tools morphing in loop (for loading screen), we create a cyclic transition.
+        // Loading progress runs from 0% to 100% over 5.5 seconds (adjustable) and each tool occupies a segment.
+        // While loading, animation cycles: broom -> mop -> vacuum -> duster -> squeegee -> (repeat or stop at end)
+        // However, loading only completes once 100% reached, then exit. For professional loading, 
+        // we will play the full morph cycle exactly ONCE from start to end? No — loading can simulate asset loading.
+        // We'll map progress: 0% = broom, 25% = mop, 50% = vacuum, 75% = duster, 100% = squeegee (final).
+        // Between these intervals, we morph smoothly between current and next tool.
+        // To make it buttery smooth, we implement custom shape interpolation.
+        // For simplicity & high detail, each cleaning tool is drawn via SVG-like path commands using canvas bezier curves,
+        // but for morphing we need to interpolate between two sets of anchor points. We'll design parametric shape description.
+        // Approach: define each tool as an array of "segments" (moveTo, lineTo, bezierCurveTo) but with fixed number of points?
+        // Better: For each tool, we generate a stylized silhouette using a set of dynamic points that can interpolate.
+        // Instead of heavy point matching, we create custom morphing by blending drawing parameters using tween factor.
+        // We'll create 5 distinct drawing functions, and in each frame we compute blend factor between current tool index & next.
+        // Then we 'mix' graphical parameters (positions, angles, lengths) to get intermediate representation.
+        // That ensures every frame morphs naturally and looks like one tool transforms to another.
         
-        if (percent >= 100 && !isComplete) {
-            isComplete = true;
-            waterTextEl.classList.add('fade-out');
-            setTimeout(() => {
-                preloader.classList.add('hide');
-                mainContent.classList.add('visible');
-            }, 600);
+        // define tool metadata
+        const tools = ['broom', 'mop', 'vacuum', 'duster', 'squeegee'];
+        const totalTools = tools.length;
+        
+        // animation state for loading simulation
+        let startTime = null;
+        let animationFrameId = null;
+        let loadingComplete = false;
+        
+        const canvas = document.getElementById('toolCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // set canvas actual dimensions (retina friendly)
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            const size = Math.min(280, window.innerWidth * 0.5);
+            canvas.style.width = `${size}px`;
+            canvas.style.height = `${size}px`;
+            canvas.width = 300;
+            canvas.height = 300;
+            drawFrame(0); // initial draw
         }
-    }
-    
-    function startWaterFill() {
-        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        window.addEventListener('resize', () => { if(!loadingComplete) resizeCanvas(); });
         
-        isComplete = false;
-        waterTextEl.classList.remove('fade-out');
-        waterTextEl.style.backgroundPosition = `0% 100%`;
-        preloader.classList.remove('hide');
-        preloader.style.opacity = '1';
-        preloader.style.visibility = 'visible';
-        mainContent.classList.remove('visible');
+        // ---- PROFESSIONAL CUSTOM DRAWING WITH MORPH BLENDING ----
+        // Instead of random, we define each tool's key parameters:
+        // For broom: handle + bristle fan; mop: handle + mop head (rectangular + strings)
+        // Vacuum: canister + hose/nozzle; duster: handle + fluffy feathers; squeegee: handle + rubber blade.
+        // We will use a unified coordinate system (0-1 normalized, center 150,150, scale 140).
+        // For interpolation we define an object containing all visual control attributes.
         
-        const duration = 2200;
-        const startTime = performance.now();
+        // define tool descriptors (parametric)
+        function getToolParams(toolName, t = 1) {
+            // t = 1 gives exact shape, but for morph we compute mix between two params.
+            // We'll return shape attributes: handleAngle, handleLength, headType, extra factors.
+            // Since full morph needs different geometries, we'll write a general drawing function that uses param weights.
+            // to keep it robust, we manually draw based on morph factor between two consecutive tools.
+            // Let's implement a direct interpolated drawer: given factor (0..1) from toolA to toolB.
+            // but for 5 step sequence we need dynamic pairs. Best: on each frame compute exact progress (0-1 global)
+            // then determine tool index and intra tween. We'll call drawing function with global morph factor.
+        }
         
-        function step(now) {
-            const elapsed = now - startTime;
-            let percent = Math.min(100, (elapsed / duration) * 100);
-            setWaterFill(percent);
+        // Better: unified drawing that accepts a 'blend' array of tool contributions? Not needed.
+        // We implement a custom interpolated drawer for each adjacent pair: broom->mop, mop->vacuum, vacuum->duster, duster->squeegee.
+        // Given a value 'mix' 0..1 for transition from current to next, we call specialized morph function.
+        // This gives full control and detailed shape transformation.
+        
+        // ============== INDIVIDUAL MORPHING FUNCTIONS ===============
+        // Each function receives ctx, width, height, t (0 to 1) where 0 = first tool, 1 = second tool.
+        // They are tailor-made for smooth & professional transformation.
+        
+        // 1. Broom (t=0) -> MOP (t=1)
+        function drawBroomToMop(ctx, t) {
+            ctx.clearRect(0, 0, 300, 300);
+            ctx.save();
+            ctx.translate(150, 150);
+            // handle base properties
+            const handleAngle = -0.25 * Math.PI + (t * 0.05); // slight shift
+            const handleLength = 95 - (t * 8);  // broom handle slightly longer, mop shorter
+            const handleWidth = 8;
+            // handle color: olive to soft brown
+            const handleColor = `rgba(105, 95, 65, ${1 - t*0.2})`;
+            ctx.beginPath();
+            const startX = -15 + t * 3;
+            const startY = 65 - t * 12;
+            const endX = startX + Math.sin(handleAngle) * handleLength;
+            const endY = startY + Math.cos(handleAngle) * handleLength;
+            ctx.moveTo(startX - handleWidth/2, startY);
+            ctx.lineTo(endX - handleWidth/2, endY);
+            ctx.lineTo(endX + handleWidth/2, endY);
+            ctx.lineTo(startX + handleWidth/2, startY);
+            ctx.fillStyle = handleColor;
+            ctx.fill();
             
-            if (percent < 100) {
-                animationFrameId = requestAnimationFrame(step);
-            } else {
-                cancelAnimationFrame(animationFrameId);
-                animationFrameId = null;
+            // Broom head part (bristle fan)
+            if (t < 0.9) {
+                const bristleFactor = Math.max(0, 1 - t * 1.2);
+                ctx.beginPath();
+                ctx.moveTo(endX - 12, endY);
+                ctx.quadraticCurveTo(endX + (1-t)*6, endY + 18 * (1-t), endX + (8 - t*12), endY + 24 * bristleFactor);
+                ctx.lineTo(endX - (8 - t*8), endY + 24 * bristleFactor);
+                ctx.quadraticCurveTo(endX - (1-t)*6, endY + 18 * (1-t), endX + 12, endY);
+                ctx.fillStyle = `rgba(125, 110, 70, ${1 - t*0.7})`;
+                ctx.fill();
+                // bristle lines
+                for(let i=0; i<8; i++) {
+                    ctx.beginPath();
+                    const off = -10 + i*3;
+                    ctx.moveTo(endX + off, endY);
+                    ctx.lineTo(endX + off + (1-t)*7, endY + 18 * (1-t));
+                    ctx.strokeStyle = `rgba(90, 70, 40, ${0.6*(1-t)})`;
+                    ctx.lineWidth = 1.2;
+                    ctx.stroke();
+                }
+            }
+            
+            // Mop head (appears as t increases)
+            if (t > 0.1) {
+                const mopStrength = Math.min(1, Math.max(0, (t - 0.1)/0.9));
+                ctx.beginPath();
+                const mopX = endX + (3 - mopStrength*2);
+                const mopY = endY + 6 * mopStrength;
+                ctx.ellipse(mopX, mopY + 12 * mopStrength, 12 + mopStrength*2, 16 * mopStrength, 0, 0, Math.PI*2);
+                ctx.fillStyle = `rgba(160, 140, 100, ${0.85 * mopStrength})`;
+                ctx.fill();
+                // mop strings
+                for(let s=0; s<12; s++) {
+                    ctx.beginPath();
+                    const angleOff = -0.6 + s*0.12;
+                    ctx.moveTo(mopX + Math.sin(angleOff)*8, mopY + 4);
+                    ctx.lineTo(mopX + Math.sin(angleOff)*12, mopY + 22 * mopStrength);
+                    ctx.strokeStyle = `rgba(115, 90, 60, ${0.6 * mopStrength})`;
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                }
+            }
+            ctx.restore();
+        }
+        
+        // 2. MOP (t=0) -> VACUUM (t=1)
+        function drawMopToVacuum(ctx, t) {
+            ctx.clearRect(0,0,300,300);
+            ctx.save();
+            ctx.translate(150,150);
+            const handleAngle = -0.22 * Math.PI + t * 0.1;
+            const handleLength = 85 - t * 12;
+            const startX = -10;
+            const startY = 58 - t*10;
+            const endX = startX + Math.sin(handleAngle) * handleLength;
+            const endY = startY + Math.cos(handleAngle) * handleLength;
+            // handle
+            ctx.beginPath();
+            ctx.rect(startX-5, startY-3, 10, handleLength);
+            ctx.fillStyle = `rgba(100, 85, 60, 0.9)`;
+            ctx.fill();
+            // mop head (fading)
+            if(t<0.8){
+                const mopAlpha = 1 - t/0.8;
+                ctx.beginPath();
+                ctx.ellipse(endX-2, endY+12, 14, 18*mopAlpha, 0,0, Math.PI*2);
+                ctx.fillStyle = `rgba(145, 120, 85, ${0.8*mopAlpha})`;
+                ctx.fill();
+            }
+            // Vacuum part (body appears)
+            if(t>0.2){
+                const vacIntensity = Math.min(1, (t-0.2)/0.8);
+                const bodyX = endX + 8 * vacIntensity;
+                const bodyY = endY - 10 * vacIntensity;
+                ctx.beginPath();
+                ctx.ellipse(bodyX+5, bodyY+12, 18*vacIntensity, 14*vacIntensity, 0,0,Math.PI*2);
+                ctx.fillStyle = `rgba(70, 85, 60, ${0.9*vacIntensity})`;
+                ctx.fill();
+                ctx.beginPath();
+                ctx.ellipse(bodyX+2, bodyY+24, 10*vacIntensity, 8*vacIntensity, 0,0,Math.PI*2);
+                ctx.fillStyle = `rgba(55, 65, 45, ${0.8*vacIntensity})`;
+                ctx.fill();
+                // nozzle / hose
+                ctx.beginPath();
+                ctx.moveTo(bodyX+8, bodyY+16);
+                ctx.lineTo(bodyX+28*vacIntensity, bodyY+20*vacIntensity);
+                ctx.lineWidth = 5*vacIntensity;
+                ctx.strokeStyle = `rgba(45,55,40,${0.8*vacIntensity})`;
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+        
+        // 3. VACUUM (t=0) -> DUSTER (t=1)
+        function drawVacuumToDuster(ctx, t) {
+            ctx.clearRect(0,0,300,300);
+            ctx.save();
+            ctx.translate(150,150);
+            const vacAlpha = 1 - Math.min(1, t*1.2);
+            // Vacuum body fading out
+            if(vacAlpha>0){
+                ctx.beginPath();
+                ctx.ellipse(-8, 18, 22*vacAlpha, 18*vacAlpha, 0,0,Math.PI*2);
+                ctx.fillStyle = `rgba(75,85,58, ${0.8*vacAlpha})`;
+                ctx.fill();
+                ctx.beginPath();
+                ctx.ellipse(-5, 35, 12*vacAlpha, 10*vacAlpha, 0,0,Math.PI*2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(8, 10);
+                ctx.lineTo(20*vacAlpha, 25*vacAlpha);
+                ctx.lineWidth = 5*vacAlpha;
+                ctx.stroke();
+            }
+            // Duster emerges
+            const dustIntensity = Math.min(1, Math.max(0, (t-0.2)/0.8));
+            if(dustIntensity>0){
+                const handleX = -10;
+                const handleY = 30 - dustIntensity*6;
+                ctx.beginPath();
+                ctx.rect(handleX-4, handleY-15, 8, 45);
+                ctx.fillStyle = `rgba(140,115,80,0.9)`;
+                ctx.fill();
+                // fluffy feather head
+                ctx.beginPath();
+                ctx.ellipse(handleX+2, handleY-20, 16*dustIntensity, 20*dustIntensity, 0.3, 0, Math.PI*2);
+                ctx.fillStyle = `rgba(205,185,145, ${0.9*dustIntensity})`;
+                ctx.fill();
+                for(let f=0; f<12; f++){
+                    ctx.beginPath();
+                    let angle = f*0.5;
+                    let rad = 12*dustIntensity;
+                    ctx.ellipse(handleX+2+Math.sin(angle)*rad*0.7, handleY-22+Math.cos(angle*1.3)*rad*0.8, 3, 8, angle, 0, Math.PI*2);
+                    ctx.fillStyle = `rgba(215,190,135, ${0.6*dustIntensity})`;
+                    ctx.fill();
+                }
+            }
+            ctx.restore();
+        }
+        
+        // 4. DUSTER (t=0) -> SQUEEGEE (t=1)
+        function drawDusterToSqueegee(ctx, t) {
+            ctx.clearRect(0,0,300,300);
+            ctx.save();
+            ctx.translate(150,150);
+            const dustAlpha = 1 - Math.min(1, t*1.1);
+            if(dustAlpha>0){
+                ctx.beginPath();
+                ctx.ellipse(-5, -15, 18*dustAlpha, 22*dustAlpha, 0,0,Math.PI*2);
+                ctx.fillStyle = `rgba(195,170,125, ${0.85*dustAlpha})`;
+                ctx.fill();
+                ctx.beginPath();
+                ctx.rect(-12, 8, 8, 45);
+                ctx.fillStyle = `rgba(125,100,70,0.8)`;
+                ctx.fill();
+            }
+            const sqIntensity = Math.min(1, Math.max(0, (t-0.2)/0.8));
+            if(sqIntensity>0){
+                // squeegee handle
+                ctx.beginPath();
+                ctx.rect(-12, 15, 8, 58);
+                ctx.fillStyle = `rgba(100,88,65,0.9)`;
+                ctx.fill();
+                // rubber blade
+                ctx.beginPath();
+                ctx.moveTo(-25, 72);
+                ctx.lineTo(20, 72);
+                ctx.lineTo(22, 80);
+                ctx.lineTo(-27, 80);
+                ctx.fillStyle = `rgba(70,75,60, ${0.95*sqIntensity})`;
+                ctx.fill();
+                ctx.beginPath();
+                ctx.rect(-24, 78, 46, 5);
+                ctx.fillStyle = `rgba(55,60,48,0.9)`;
+                ctx.fill();
+                // metal accent
+                ctx.beginPath();
+                ctx.moveTo(-22, 70);
+                ctx.lineTo(18, 70);
+                ctx.lineWidth = 2.5;
+                ctx.strokeStyle = `#b0a07a`;
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+        
+        // map global progress to segment and intra tween
+        let lastProgress = 0;
+        function drawBasedOnProgress(progress01) { // 0..1
+            if(progress01 >= 0.999) {
+                // final frame: draw squeegee perfectly
+                drawDusterToSqueegee(ctx, 1.0);
+                return;
+            }
+            // Determine which segment: each tool occupies 0.2 range, except transitions morph inside each interval.
+            // We have 5 tools => 4 transitions (broom->mop, mop->vacuum, vacuum->duster, duster->squeegee)
+            // However from 0 to 0.2 = pure broom? no for smoothness, morphing across entire range:
+            // better: segment i from 0 to 0.25 for first morph, but to make all tools appear, we map:
+            // For 0 to 0.2: broom -> mop morph, at 0 = broom, 0.2 = mop.
+            // 0.2 to 0.4: mop -> vacuum morph, 0.2=mop, 0.4=vacuum.
+            // 0.4 to 0.6: vacuum -> duster, 0.6=duster.
+            // 0.6 to 0.8: duster -> squeegee, 0.8=squeegee.
+            // 0.8 to 1.0: hold squeegee (full), but we also show perfect final.
+            let morphT, segment;
+            if(progress01 <= 0.2) {
+                segment = 0;
+                morphT = progress01 / 0.2;  // broom -> mop
+                drawBroomToMop(ctx, morphT);
+            } 
+            else if(progress01 <= 0.4) {
+                segment = 1;
+                morphT = (progress01 - 0.2) / 0.2;
+                drawMopToVacuum(ctx, morphT);
+            }
+            else if(progress01 <= 0.6) {
+                segment = 2;
+                morphT = (progress01 - 0.4) / 0.2;
+                drawVacuumToDuster(ctx, morphT);
+            }
+            else if(progress01 <= 0.8) {
+                segment = 3;
+                morphT = (progress01 - 0.6) / 0.2;
+                drawDusterToSqueegee(ctx, morphT);
+            }
+            else {
+                // final zone: perfect squeegee
+                drawDusterToSqueegee(ctx, 1.0);
             }
         }
         
-        animationFrameId = requestAnimationFrame(step);
-    }
-    
-    function replayAnimation() {
-        if (animationFrameId) cancelAnimationFrame(animationFrameId);
-        isComplete = false;
-        mainContent.classList.remove('visible');
-        preloader.classList.remove('hide');
-        preloader.style.opacity = '1';
-        preloader.style.visibility = 'visible';
-        waterTextEl.classList.remove('fade-out');
-        waterTextEl.style.backgroundPosition = `0% 100%`;
+        // loading simulation: duration 5.2 seconds smooth
+        let loadingDuration = 5200; // ms
+        let startTimestamp = null;
         
-        setTimeout(() => {
-            startWaterFill();
-        }, 50);
-    }
-    
-    const replayBtn = document.getElementById('replayBtn');
-    if (replayBtn) {
-        replayBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            replayAnimation();
+        function updateLoading(now) {
+            if(loadingComplete) return;
+            if(startTimestamp === null) startTimestamp = now;
+            let elapsed = now - startTimestamp;
+            let rawProgress = Math.min(1, elapsed / loadingDuration);
+            let easedProgress = easeOutCubic(rawProgress);
+            // update progress bar & percent
+            const percent = Math.floor(easedProgress * 100);
+            document.getElementById('progressFill').style.width = `${percent}%`;
+            document.getElementById('percentLabel').innerText = `${percent}%`;
+            // draw canvas morph
+            drawBasedOnProgress(easedProgress);
+            
+            if(rawProgress >= 1.0) {
+                // loading complete
+                loadingComplete = true;
+                if(animationFrameId) cancelAnimationFrame(animationFrameId);
+                // finalize to squeegee crisp
+                drawDusterToSqueegee(ctx, 1.0);
+                // fade out loading screen, reveal content
+                const loadingEl = document.getElementById('loadingScreen');
+                const mainEl = document.getElementById('mainContent');
+                loadingEl.style.opacity = '0';
+                setTimeout(() => {
+                    loadingEl.style.display = 'none';
+                    mainEl.style.visibility = 'visible';
+                    mainEl.style.opacity = '1';
+                }, 800);
+                return;
+            }
+            animationFrameId = requestAnimationFrame(updateLoading);
+        }
+        
+        function easeOutCubic(x) {
+            return 1 - Math.pow(1 - x, 3);
+        }
+        
+        function startLoading() {
+            resizeCanvas();
+            startTimestamp = null;
+            animationFrameId = requestAnimationFrame(updateLoading);
+        }
+        
+        // initial draw
+        drawBroomToMop(ctx, 0);
+        startLoading();
+        
+        // handle canvas resize on load
+        window.addEventListener('load', () => {
+            resizeCanvas();
         });
-    }
-    
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            startWaterFill();
-        }, 200);
-    });
-    
-    let waveX = 0;
-    function waveEffectLoop() {
-        if (!preloader.classList.contains('hide')) {
-            waveX = (waveX + 0.3) % 6;
-            if (waterTextEl) waterTextEl.style.backgroundPositionX = `${waveX}px`;
-        }
-        requestAnimationFrame(waveEffectLoop);
-    }
-    waveEffectLoop();
-})();
+    })();
 </script>
-
-<style>
-    .water-fill-text {
-        background: linear-gradient(
-            to bottom,
-            #4a6e3a,
-            #7aad5a,
-            #a8d480,
-            #c5ea9e
-        );
-        background-size: 100% 200%;
-        background-repeat: no-repeat;
-        background-position: 0% 100%;
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-        transition: background-position 0.03s linear, opacity 0.6s ease-out;
-    }
-    
-    .wave-overlay::before {
-        mix-blend-mode: overlay;
-        opacity: 0.4;
-    }
-    
-    @media (max-width: 550px) {
-        .water-fill-text {
-            font-size: clamp(2.3rem, 10vw, 3.8rem);
-        }
-        .wave-overlay::before {
-            font-size: clamp(2.3rem, 10vw, 3.8rem);
-        }
-    }
-    
-    .preloader {
-        background: radial-gradient(ellipse at center, #f7f4ed 0%, #e6e0d4 100%);
-    }
-</style>
 </body>
 </html>
