@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, initial-scale=1.0, viewport-fit=cover">
-    <title>Preloader: Alice's Cleaning - Water Fill Text Effect</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Alice's Cleaning - Water Fill Preloader</title>
     <style>
         * {
             margin: 0;
@@ -11,15 +11,14 @@
             box-sizing: border-box;
         }
 
-        /* Color palette inspired by your eco brand */
         :root {
             --olive-dark: #5a6f4a;
             --olive-medium: #7a9063;
             --olive-light: #a8ba94;
             --cream: #f5f3ef;
             --brown-accent: #8b7355;
-            --water-light: #9bbf8f;
-            --water-dark: #5f7e4e;
+            --water-dark: #4a6e3a;
+            --water-light: #8fc070;
             --white: #fefefe;
         }
 
@@ -32,7 +31,6 @@
             overflow-x: hidden;
         }
 
-        /* ========== PRELOADER / SPLASH SCREEN ========== */
         .preloader {
             position: fixed;
             top: 0;
@@ -52,7 +50,6 @@
             visibility: hidden;
         }
 
-        /* Container that holds the animated text */
         .water-text-container {
             text-align: center;
             padding: 2rem;
@@ -60,34 +57,32 @@
             margin: 0 auto;
         }
 
-        /* BIG TEXT: "Alice's Cleaning" - water fill effect inside each letter */
         .water-fill-text {
             font-family: 'Cormorant Garamond', 'Georgia', serif;
             font-size: clamp(3rem, 12vw, 6.5rem);
             font-weight: 700;
             letter-spacing: 0.02em;
-            color: var(--olive-dark);
-            /* The water fill uses background-clip: text */
             background: linear-gradient(
                 to bottom,
                 var(--water-dark) 0%,
-                var(--water-light) 30%,
-                #c7e0b5 60%,
-                #a8d18c 100%
+                var(--water-light) 35%,
+                #c2e0a8 65%,
+                #daf0c0 100%
             );
             background-size: 100% 200%;
             background-repeat: no-repeat;
+            background-position: 0% 100%;
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            position: relative;
             display: inline-block;
-            transition: background-position 0.05s linear;
-            /* Add a subtle text shadow for depth */
-            text-shadow: 0 2px 8px rgba(90, 111, 74, 0.15);
+            transition: opacity 0.6s ease-out;
         }
 
-        /* Wavy overlay to give water movement illusion inside text */
+        .water-fill-text.fade-out {
+            opacity: 0;
+        }
+
         .wave-overlay {
             position: relative;
             display: inline-block;
@@ -105,32 +100,31 @@
             font-weight: 700;
             background: repeating-linear-gradient(
                 transparent 0px,
-                transparent 2px,
-                rgba(100, 130, 80, 0.25) 2px,
-                rgba(100, 130, 80, 0.25) 6px
+                transparent 3px,
+                rgba(80, 110, 60, 0.2) 3px,
+                rgba(80, 110, 60, 0.2) 8px
             );
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             pointer-events: none;
             z-index: 2;
-            animation: subtleWaveShift 1.4s infinite ease-in-out;
+            animation: waveShift 1.2s infinite ease-in-out;
         }
 
-        @keyframes subtleWaveShift {
+        @keyframes waveShift {
             0% { transform: translateY(0px); }
-            50% { transform: translateY(2px); }
+            50% { transform: translateY(3px); }
             100% { transform: translateY(0px); }
         }
 
-        /* Additional water droplet / bubble decorations (just for vibe) */
         .water-bubbles {
             margin-top: 2rem;
             display: flex;
             justify-content: center;
             gap: 1rem;
             flex-wrap: wrap;
-            opacity: 0.7;
+            opacity: 0.6;
         }
 
         .bubble {
@@ -139,7 +133,6 @@
             background: var(--water-light);
             border-radius: 50%;
             animation: bubbleFloat 2s infinite ease-in-out;
-            box-shadow: 0 0 6px rgba(90, 111, 74, 0.4);
         }
 
         .bubble:nth-child(2) { width: 12px; height: 12px; animation-delay: 0.3s; background: #8bb36b; }
@@ -153,29 +146,6 @@
             100% { transform: translateY(0px) scale(1); opacity: 0.4; }
         }
 
-        /* Fill status indicator (discrete) */
-        .fill-percent {
-            margin-top: 2rem;
-            font-size: 0.9rem;
-            color: var(--olive-dark);
-            font-weight: 500;
-            letter-spacing: 1px;
-            background: rgba(255,255,245,0.5);
-            display: inline-block;
-            padding: 0.3rem 1rem;
-            border-radius: 60px;
-            backdrop-filter: blur(4px);
-        }
-
-        /* Loading message */
-        .loading-message {
-            margin-top: 1rem;
-            font-size: 0.85rem;
-            color: var(--brown-accent);
-            font-style: italic;
-        }
-
-        /* ===== MAIN PAGE CONTENT (hidden until water fill completes) ===== */
         .main-content {
             max-width: 1200px;
             margin: 0 auto;
@@ -281,19 +251,15 @@
             .water-fill-text {
                 letter-spacing: normal;
             }
-            .fill-percent {
-                font-size: 0.8rem;
-            }
         }
     </style>
 </head>
 <body>
 
-<!-- PRELOADER: Water filling text effect inside "Alice's Cleaning" letters -->
 <div class="preloader" id="preloader">
     <div class="water-text-container">
         <div class="wave-overlay" data-text="Alice's Cleaning">
-            <h1 class="water-fill-text" id="waterText">Alice's Cleaning</h1>
+            <div class="water-fill-text" id="waterText">Alice's Cleaning</div>
         </div>
         <div class="water-bubbles">
             <div class="bubble"></div>
@@ -302,12 +268,9 @@
             <div class="bubble"></div>
             <div class="bubble"></div>
         </div>
-        <div class="fill-percent" id="fillPercentDisplay">💧 filling 0%</div>
-        <div class="loading-message" id="loadingMsg">🌊 water rising inside letters...</div>
     </div>
 </div>
 
-<!-- MAIN WEBSITE (appears after water fill is complete and text fades) -->
 <div class="main-content" id="mainContent">
     <div class="welcome-card">
         <div class="brand-icon">🏡💧🌿</div>
@@ -324,213 +287,107 @@
 </div>
 
 <script>
-    // PROTOTYPE: Water fill effect inside the letters of "Alice's Cleaning"
-    // The text itself gets a gradient that moves from bottom (0% fill) to top (100% fill)
-    // As fill progresses, the text slowly fades out. When fill reaches 100%, preloader hides and main content appears.
-    // Additional wave/wobble effect + bubble animation.
+(function() {
+    const preloader = document.getElementById('preloader');
+    const mainContent = document.getElementById('mainContent');
+    const waterTextEl = document.getElementById('waterText');
     
-    (function() {
-        const preloader = document.getElementById('preloader');
-        const mainContent = document.getElementById('mainContent');
-        const waterTextEl = document.getElementById('waterText');
-        const fillPercentSpan = document.getElementById('fillPercentDisplay');
-        const loadingMsgSpan = document.getElementById('loadingMsg');
+    let animationFrameId = null;
+    let isComplete = false;
+    
+    function setWaterFill(percent) {
+        const positionY = 100 - percent;
+        waterTextEl.style.backgroundPosition = `0% ${positionY}%`;
         
-        let fillProgress = 0;        // 0 to 100
-        let animationFrameId = null;
-        let fillInterval = null;
-        let isComplete = false;
-        
-        // The text element uses background-position to simulate water level inside letters.
-        // Background gradient from top (0%) to bottom (100%): initially water is at bottom.
-        // We'll set background-size: 100% 200% and then move background-position from bottom to top.
-        // Initial: background-position: 0% 100% (water at bottom, text appears empty/transparent top)
-        // Final: background-position: 0% 0% (water fully covering letters)
-        
-        function setWaterFill(percent) {
-            // percent: 0 (empty) -> 100 (full)
-            // The gradient moves upward: at 0% water is only at bottom edge, at 100% water covers all.
-            // We control background-position Y: from 100% (bottom) to 0% (top)
-            const positionY = 100 - percent;  // when percent=0 -> 100% (water hidden), percent=100 -> 0% (full water)
-            waterTextEl.style.backgroundPosition = `0% ${positionY}%`;
-            
-            // Also apply a subtle text fade as water fills: at 100% fill, text becomes slightly translucent then final fade handled after.
-            // But we want the text to start fading when water is almost full (like a powerpoint effect).
-            // For smoothness: reduce opacity of text when fill > 70% (optional), but we'll do full reveal later.
-            if (percent >= 100) {
-                // water full, prepare to vanish preloader
-                if (!isComplete) {
-                    isComplete = true;
-                    finishAndReveal();
-                }
-            }
-            
-            // update percent display
-            fillPercentSpan.innerHTML = `💧 filling ${Math.floor(percent)}%`;
-            if (percent >= 85) {
-                loadingMsgSpan.innerHTML = "✨ almost there, sparkling clean! ✨";
-            } else if (percent > 40) {
-                loadingMsgSpan.innerHTML = "🌊 water rising... letters are filling";
-            }
-        }
-        
-        // Function to animate water rising over time (~2 seconds total, smooth)
-        function startWaterFill() {
-            if (fillInterval) clearInterval(fillInterval);
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-            
-            fillProgress = 0;
-            isComplete = false;
-            
-            // reset text styles and background position to initial (empty)
-            waterTextEl.style.backgroundPosition = `0% 100%`;
-            waterTextEl.style.transition = 'background-position 0.02s linear';
-            // Remove any leftover opacity fading on container
-            const container = document.querySelector('.water-text-container');
-            if (container) container.style.opacity = '1';
-            preloader.style.opacity = '1';
-            preloader.style.visibility = 'visible';
-            preloader.classList.remove('hide');
-            mainContent.classList.remove('visible');
-            
-            // Reset loading message
-            loadingMsgSpan.innerHTML = "💧 water filling the letters...";
-            fillPercentSpan.innerHTML = `💧 filling 0%`;
-            
-            // Increment fill over 2000ms (2 seconds) for smooth Powerpoint-like transition
-            const duration = 2100; // ms
-            const startTime = performance.now();
-            
-            function step(now) {
-                const elapsed = now - startTime;
-                let percent = Math.min(100, (elapsed / duration) * 100);
-                setWaterFill(percent);
-                fillProgress = percent;
-                
-                if (percent < 100) {
-                    animationFrameId = requestAnimationFrame(step);
-                } else {
-                    // fill complete, the setWaterFill will trigger finishAndReveal after a tiny delay to ensure visual
-                    if (!isComplete) {
-                        setWaterFill(100);
-                        isComplete = true;
-                        finishAndReveal();
-                    }
-                    cancelAnimationFrame(animationFrameId);
-                    animationFrameId = null;
-                }
-            }
-            
-            animationFrameId = requestAnimationFrame(step);
-        }
-        
-        // After water fill completes, we also add a last "wave" shine, then fade out preloader & show main content
-        function finishAndReveal() {
-            if (window._revealTriggered) return;
-            window._revealTriggered = true;
-            
-            // final visual: ensure water fill is 100%
-            setWaterFill(100);
-            loadingMsgSpan.innerHTML = "💦 completely fresh! opening website...";
-            fillPercentSpan.innerHTML = `✨ 100% crystal clear ✨`;
-            
-            // Add a final little "wave sparkle" effect on text (add a temporary shine class)
-            waterTextEl.style.transition = 'all 0.3s';
-            waterTextEl.style.textShadow = '0 0 10px rgba(100, 150, 80, 0.5)';
-            
-            // Slight delay for the final effect, then fade out preloader and show main content
+        if (percent >= 100 && !isComplete) {
+            isComplete = true;
+            waterTextEl.classList.add('fade-out');
             setTimeout(() => {
-                // fade out preloader with smooth transition
                 preloader.classList.add('hide');
-                // show main website content with fade-in scale effect
                 mainContent.classList.add('visible');
-                
-                // remove extra shine after transition
-                setTimeout(() => {
-                    if (waterTextEl) waterTextEl.style.textShadow = '';
-                }, 500);
-            }, 380);
+            }, 600);
         }
+    }
+    
+    function startWaterFill() {
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
         
-        // Replay functionality: Reset and run water fill animation again, hide main content.
-        function replayAnimation() {
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-            if (window._revealTriggered) window._revealTriggered = false;
-            isComplete = false;
-            
-            // Hide main content and show preloader again
-            mainContent.classList.remove('visible');
-            preloader.classList.remove('hide');
-            preloader.style.opacity = '1';
-            preloader.style.visibility = 'visible';
-            
-            // Reset any extra overlay styles
-            waterTextEl.style.transition = '';
-            waterTextEl.style.textShadow = '';
-            
-            // Reset background position to 0% 100% (empty)
-            waterTextEl.style.backgroundPosition = `0% 100%`;
-            
-            // Reset loading message and percentage
-            fillPercentSpan.innerHTML = `💧 filling 0%`;
-            loadingMsgSpan.innerHTML = "🌊 water rising inside letters...";
-            
-            // restart fill animation after a tiny frame delay to ensure reset
-            setTimeout(() => {
-                startWaterFill();
-            }, 30);
-        }
+        isComplete = false;
+        waterTextEl.classList.remove('fade-out');
+        waterTextEl.style.backgroundPosition = `0% 100%`;
+        preloader.classList.remove('hide');
+        preloader.style.opacity = '1';
+        preloader.style.visibility = 'visible';
+        mainContent.classList.remove('visible');
         
-        // Attach replay button event listener
-        const replayBtn = document.getElementById('replayBtn');
-        if (replayBtn) {
-            replayBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                replayAnimation();
-            });
-        }
+        const duration = 2200;
+        const startTime = performance.now();
         
-        // Initialize: on page load start the water fill animation
-        window.addEventListener('load', () => {
-            // Small delay to ensure CSS transitions ready
-            setTimeout(() => {
-                startWaterFill();
-            }, 200);
-        });
-        
-        // Additional wave effect on the text: subtle gradient wave motion (already in keyframes)
-        // To make water inside letters feel dynamic, we add a small CSS animation to the gradient's position X?
-        // But the wave-overlay::before gives subtle wavy movement. Enhance by shifting background gradient slightly over time.
-        let waveX = 0;
-        function waveEffectLoop() {
-            if (!waterTextEl) return;
-            // only if not complete or not hidden? subtle wave
-            if (!preloader.classList.contains('hide')) {
-                waveX = (waveX + 0.3) % 6;
-                waterTextEl.style.backgroundPositionX = `${waveX}px`;
+        function step(now) {
+            const elapsed = now - startTime;
+            let percent = Math.min(100, (elapsed / duration) * 100);
+            setWaterFill(percent);
+            
+            if (percent < 100) {
+                animationFrameId = requestAnimationFrame(step);
+            } else {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
             }
-            requestAnimationFrame(waveEffectLoop);
         }
-        waveEffectLoop();
         
-        // For mobile: ensure text stays centered and font is readable
-        // Also note: we used background-clip: text, and text color transparent works perfectly.
-        // For browsers that don't support background-clip: text, we add a fallback but all modern browsers support.
+        animationFrameId = requestAnimationFrame(step);
+    }
+    
+    function replayAnimation() {
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        isComplete = false;
+        mainContent.classList.remove('visible');
+        preloader.classList.remove('hide');
+        preloader.style.opacity = '1';
+        preloader.style.visibility = 'visible';
+        waterTextEl.classList.remove('fade-out');
+        waterTextEl.style.backgroundPosition = `0% 100%`;
         
-        console.log('Preloader ready: water fills the letters "Alice\'s Cleaning" → fades → reveals site.');
-    })();
+        setTimeout(() => {
+            startWaterFill();
+        }, 50);
+    }
+    
+    const replayBtn = document.getElementById('replayBtn');
+    if (replayBtn) {
+        replayBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            replayAnimation();
+        });
+    }
+    
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            startWaterFill();
+        }, 200);
+    });
+    
+    let waveX = 0;
+    function waveEffectLoop() {
+        if (!preloader.classList.contains('hide')) {
+            waveX = (waveX + 0.3) % 6;
+            if (waterTextEl) waterTextEl.style.backgroundPositionX = `${waveX}px`;
+        }
+        requestAnimationFrame(waveEffectLoop);
+    }
+    waveEffectLoop();
+})();
 </script>
 
-<!-- Extra style for better water simulation inside letters -->
 <style>
-    /* Ensure the background-clip text effect works cross-browser */
     .water-fill-text {
         background: linear-gradient(
             to bottom,
-            #6e9856,
-            #8ab86a,
-            #b1da92,
-            #cbe8b0
+            #4a6e3a,
+            #7aad5a,
+            #a8d480,
+            #c5ea9e
         );
         background-size: 100% 200%;
         background-repeat: no-repeat;
@@ -538,54 +395,25 @@
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
-        transition: background-position 0.05s linear;
+        transition: background-position 0.03s linear, opacity 0.6s ease-out;
     }
     
-    /* Add subtle water wave animation on the whole text container */
-    .water-text-container {
-        animation: gentleRise 0.5s ease-out;
-    }
-    
-    @keyframes gentleRise {
-        0% { opacity: 0; transform: scale(0.98); }
-        100% { opacity: 1; transform: scale(1); }
-    }
-    
-    /* Additional water drip effect on the letters (optional) */
     .wave-overlay::before {
         mix-blend-mode: overlay;
-        opacity: 0.5;
+        opacity: 0.4;
     }
     
-    /* responsive font tuning */
     @media (max-width: 550px) {
         .water-fill-text {
             font-size: clamp(2.3rem, 10vw, 3.8rem);
-            letter-spacing: -0.01em;
         }
         .wave-overlay::before {
             font-size: clamp(2.3rem, 10vw, 3.8rem);
         }
-        .fill-percent {
-            font-size: 0.75rem;
-        }
     }
     
-    /* make preloader background match cream tones */
     .preloader {
         background: radial-gradient(ellipse at center, #f7f4ed 0%, #e6e0d4 100%);
-    }
-    
-    /* shine reflection for text */
-    .water-fill-text::after {
-        display: none;
-    }
-    
-    /* smoothness for fill display */
-    #fillPercentDisplay {
-        font-family: monospace;
-        background: rgba(90, 111, 74, 0.1);
-        backdrop-filter: blur(4px);
     }
 </style>
 </body>
