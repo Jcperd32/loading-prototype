@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preloader - Window Cleaning (Stains to Clean)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, initial-scale=1.0, viewport-fit=cover">
+    <title>Preloader: Alice's Cleaning - Water Fill Text Effect</title>
     <style>
         * {
             margin: 0;
@@ -11,13 +11,15 @@
             box-sizing: border-box;
         }
 
-        /* Colors matching your eco brand */
+        /* Color palette inspired by your eco brand */
         :root {
             --olive-dark: #5a6f4a;
             --olive-medium: #7a9063;
             --olive-light: #a8ba94;
             --cream: #f5f3ef;
             --brown-accent: #8b7355;
+            --water-light: #9bbf8f;
+            --water-dark: #5f7e4e;
             --white: #fefefe;
         }
 
@@ -25,11 +27,9 @@
             font-family: 'Lato', 'Segoe UI', system-ui, sans-serif;
             background: linear-gradient(135deg, var(--cream) 0%, #e8e4dc 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            overflow-x: hidden;
         }
 
         /* ========== PRELOADER / SPLASH SCREEN ========== */
@@ -39,13 +39,12 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, var(--cream) 0%, #e2ddd2 100%);
+            background: linear-gradient(135deg, #f0ede7 0%, #e2ddd2 100%);
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            transition: opacity 0.7s ease-in-out, visibility 0.7s ease-in-out;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s ease;
         }
 
         .preloader.hide {
@@ -53,192 +52,142 @@
             visibility: hidden;
         }
 
-        /* Clean centered container for the window */
-        .animation-container {
+        /* Container that holds the animated text */
+        .water-text-container {
             text-align: center;
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(4px);
-            padding: 2rem 2.5rem;
-            border-radius: 48px;
-            box-shadow: 0 20px 40px rgba(90, 111, 74, 0.2);
-            border: 1px solid rgba(122, 144, 99, 0.3);
+            padding: 2rem;
+            max-width: 95vw;
+            margin: 0 auto;
         }
 
-        /* Window wrapper - perfectly centered relative to container */
-        .window-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        /* The window frame */
-        .window-frame {
-            position: relative;
-            width: 320px;
-            height: 320px;
-            background: #c9c1b2;
-            border-radius: 24px;
-            border: 10px solid #b59f7e;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        /* Glass pane background (slightly tinted) */
-        .window-glass {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(145deg, rgba(210, 200, 175, 0.5), rgba(180, 170, 145, 0.3));
-            z-index: 1;
-        }
-
-        /* STAINS (smoke-like / dark marks) that will be cleaned */
-        .stains-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        .stain {
-            position: absolute;
-            background: rgba(60, 55, 50, 0.65);
-            border-radius: 50%;
-            filter: blur(6px);
-            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-        }
-
-        /* Individual stain positions and sizes */
-        .stain-1 { width: 70px; height: 70px; top: 15%; left: 10%; background: rgba(45, 40, 35, 0.7); filter: blur(8px); }
-        .stain-2 { width: 90px; height: 90px; bottom: 20%; right: 12%; background: rgba(50, 45, 40, 0.65); filter: blur(10px); }
-        .stain-3 { width: 55px; height: 55px; top: 55%; left: 60%; background: rgba(40, 38, 35, 0.7); filter: blur(7px); }
-        .stain-4 { width: 80px; height: 80px; top: 70%; left: 20%; background: rgba(55, 48, 42, 0.6); filter: blur(9px); }
-        .stain-5 { width: 45px; height: 45px; top: 25%; right: 20%; background: rgba(35, 32, 28, 0.75); filter: blur(6px); }
-        .stain-6 { width: 60px; height: 60px; bottom: 10%; left: 40%; background: rgba(48, 43, 38, 0.7); filter: blur(7px); }
-        .stain-7 { width: 50px; height: 50px; top: 40%; left: 75%; background: rgba(52, 46, 40, 0.68); filter: blur(8px); }
-
-        /* Cleaning wiper / squeegee that moves across the window */
-        .cleaning-tool {
-            position: absolute;
-            width: 120%;
-            height: 38px;
-            background: linear-gradient(95deg, #6f8a5c, #8aa876);
-            border-radius: 40px;
-            left: -10%;
-            z-index: 4;
-            opacity: 0.85;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
-            filter: blur(1.5px);
-            animation: wipeAcross 1.2s ease-in-out forwards;
-            /* will be controlled by JS for precise timing and finishing */
-        }
-
-        /* Keyframes for the wiping motion (smoother, covers whole window) */
-        @keyframes wipeAcross {
-            0% {
-                top: -5%;
-                transform: rotate(-3deg);
-                opacity: 0.9;
-            }
-            20% {
-                top: 18%;
-                transform: rotate(1deg);
-            }
-            40% {
-                top: 40%;
-                transform: rotate(-1deg);
-            }
-            60% {
-                top: 62%;
-                transform: rotate(2deg);
-            }
-            80% {
-                top: 82%;
-                transform: rotate(-1deg);
-            }
-            100% {
-                top: 105%;
-                transform: rotate(0deg);
-                opacity: 0;
-            }
-        }
-
-        /* Cleaning shine effect (subtle glow after cleaning) */
-        .clean-shine {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 30% 40%, rgba(255, 255, 210, 0.4), transparent 70%);
-            z-index: 5;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        /* Loading text + subtle status */
-        .loading-status {
-            margin-top: 28px;
-            font-size: 1.2rem;
+        /* BIG TEXT: "Alice's Cleaning" - water fill effect inside each letter */
+        .water-fill-text {
+            font-family: 'Cormorant Garamond', 'Georgia', serif;
+            font-size: clamp(3rem, 12vw, 6.5rem);
+            font-weight: 700;
+            letter-spacing: 0.02em;
             color: var(--olive-dark);
-            font-weight: 500;
-            letter-spacing: 0.5px;
+            /* The water fill uses background-clip: text */
+            background: linear-gradient(
+                to bottom,
+                var(--water-dark) 0%,
+                var(--water-light) 30%,
+                #c7e0b5 60%,
+                #a8d18c 100%
+            );
+            background-size: 100% 200%;
+            background-repeat: no-repeat;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+            display: inline-block;
+            transition: background-position 0.05s linear;
+            /* Add a subtle text shadow for depth */
+            text-shadow: 0 2px 8px rgba(90, 111, 74, 0.15);
+        }
+
+        /* Wavy overlay to give water movement illusion inside text */
+        .wave-overlay {
+            position: relative;
+            display: inline-block;
+        }
+
+        .wave-overlay::before {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Cormorant Garamond', 'Georgia', serif;
+            font-size: clamp(3rem, 12vw, 6.5rem);
+            font-weight: 700;
+            background: repeating-linear-gradient(
+                transparent 0px,
+                transparent 2px,
+                rgba(100, 130, 80, 0.25) 2px,
+                rgba(100, 130, 80, 0.25) 6px
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            pointer-events: none;
+            z-index: 2;
+            animation: subtleWaveShift 1.4s infinite ease-in-out;
+        }
+
+        @keyframes subtleWaveShift {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(2px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Additional water droplet / bubble decorations (just for vibe) */
+        .water-bubbles {
+            margin-top: 2rem;
             display: flex;
-            align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 1rem;
+            flex-wrap: wrap;
+            opacity: 0.7;
         }
 
-        .dot-pulse {
-            display: flex;
-            gap: 6px;
-        }
-
-        .dot-pulse span {
+        .bubble {
             width: 8px;
             height: 8px;
-            background: var(--olive-medium);
+            background: var(--water-light);
             border-radius: 50%;
-            animation: pulseDot 1.2s infinite;
+            animation: bubbleFloat 2s infinite ease-in-out;
+            box-shadow: 0 0 6px rgba(90, 111, 74, 0.4);
         }
 
-        .dot-pulse span:nth-child(2) { animation-delay: 0.2s; }
-        .dot-pulse span:nth-child(3) { animation-delay: 0.4s; }
+        .bubble:nth-child(2) { width: 12px; height: 12px; animation-delay: 0.3s; background: #8bb36b; }
+        .bubble:nth-child(3) { width: 6px; height: 6px; animation-delay: 0.7s; }
+        .bubble:nth-child(4) { width: 10px; height: 10px; animation-delay: 0.2s; }
+        .bubble:nth-child(5) { width: 14px; height: 14px; animation-delay: 0.5s; background: #6e9558; }
 
-        @keyframes pulseDot {
-            0%, 60%, 100% { transform: scale(0.6); opacity: 0.4; }
-            30% { transform: scale(1.2); opacity: 1; }
+        @keyframes bubbleFloat {
+            0% { transform: translateY(0px) scale(1); opacity: 0.4; }
+            50% { transform: translateY(-15px) scale(1.1); opacity: 0.9; }
+            100% { transform: translateY(0px) scale(1); opacity: 0.4; }
         }
 
-        /* Small cleaning message */
-        .cleaning-message {
-            margin-top: 16px;
+        /* Fill status indicator (discrete) */
+        .fill-percent {
+            margin-top: 2rem;
             font-size: 0.9rem;
+            color: var(--olive-dark);
+            font-weight: 500;
+            letter-spacing: 1px;
+            background: rgba(255,255,245,0.5);
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Loading message */
+        .loading-message {
+            margin-top: 1rem;
+            font-size: 0.85rem;
             color: var(--brown-accent);
             font-style: italic;
         }
 
-        /* ===== MAIN PAGE CONTENT (hidden until preloader finishes) ===== */
+        /* ===== MAIN PAGE CONTENT (hidden until water fill completes) ===== */
         .main-content {
-            max-width: 800px;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(8px);
-            border-radius: 32px;
-            padding: 2.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
             text-align: center;
-            box-shadow: 0 20px 50px rgba(90, 111, 74, 0.2);
-            border: 1px solid rgba(122, 144, 99, 0.3);
             opacity: 0;
             transform: scale(0.96);
-            transition: opacity 0.7s ease, transform 0.7s ease;
+            transition: opacity 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1), transform 0.7s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .main-content.visible {
@@ -246,348 +195,397 @@
             transform: scale(1);
         }
 
+        .welcome-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 3rem 2rem;
+            box-shadow: 0 25px 50px rgba(90, 111, 74, 0.2);
+            border: 1px solid rgba(122, 144, 99, 0.3);
+        }
+
         h1 {
-            font-family: 'Cormorant Garamond', 'Georgia', serif;
-            font-size: 2.5rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
             color: var(--olive-dark);
             margin-bottom: 1rem;
         }
 
         .brand-icon {
-            font-size: 3rem;
-            margin: 0.5rem 0;
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
         }
 
         p {
             color: #3d4936;
-            line-height: 1.5;
-            margin: 1rem 0;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 1rem auto;
         }
 
-        .demo-note {
-            background: var(--olive-light);
-            padding: 12px;
+        .eco-badge {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: rgba(122, 144, 99, 0.15);
+            padding: 0.5rem 1.2rem;
             border-radius: 60px;
-            color: #2c3e2b;
-            font-weight: 500;
-            display: inline-block;
-            margin-top: 20px;
+            font-size: 0.9rem;
+            color: var(--olive-dark);
+            font-weight: 600;
         }
 
         button {
-            background: var(--olive-medium);
+            background: linear-gradient(135deg, var(--olive-medium), var(--olive-dark));
             border: none;
-            padding: 10px 24px;
-            border-radius: 40px;
+            padding: 0.9rem 2rem;
+            border-radius: 60px;
             color: white;
             font-weight: bold;
-            margin-top: 20px;
+            font-size: 1rem;
             cursor: pointer;
-            transition: 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 1rem;
         }
 
         button:hover {
-            background: var(--olive-dark);
-            transform: scale(1.02);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(90, 111, 74, 0.3);
         }
 
         .footer-note {
-            margin-top: 2rem;
+            margin-top: 3rem;
             font-size: 0.8rem;
-            opacity: 0.7;
+            opacity: 0.6;
+        }
+
+        @media (max-width: 640px) {
+            .welcome-card {
+                padding: 2rem 1.2rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            p {
+                font-size: 1rem;
+            }
+            .badge {
+                font-size: 0.75rem;
+            }
+            .water-fill-text {
+                letter-spacing: normal;
+            }
+            .fill-percent {
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
 <body>
 
-<!-- PRELOADER: Window cleaning animation (only window, stains get cleaned, no leaf, no sparkles) -->
+<!-- PRELOADER: Water filling text effect inside "Alice's Cleaning" letters -->
 <div class="preloader" id="preloader">
-    <div class="animation-container">
-        <div class="window-wrapper">
-            <div class="window-frame" id="windowFrame">
-                <!-- Glass background -->
-                <div class="window-glass"></div>
-                
-                <!-- STAINS (dark smoke-like spots) -->
-                <div class="stains-layer" id="stainsLayer">
-                    <div class="stain stain-1"></div>
-                    <div class="stain stain-2"></div>
-                    <div class="stain stain-3"></div>
-                    <div class="stain stain-4"></div>
-                    <div class="stain stain-5"></div>
-                    <div class="stain stain-6"></div>
-                    <div class="stain stain-7"></div>
-                </div>
-
-                <!-- Cleaning tool (wiper/squeegee) -->
-                <div class="cleaning-tool" id="cleaningTool"></div>
-                
-                <!-- Subtle shine after cleaning -->
-                <div class="clean-shine" id="cleanShine"></div>
-            </div>
+    <div class="water-text-container">
+        <div class="wave-overlay" data-text="Alice's Cleaning">
+            <h1 class="water-fill-text" id="waterText">Alice's Cleaning</h1>
         </div>
-
-        <div class="loading-status">
-            <span>🧼 Wiping away dirt...</span>
-            <div class="dot-pulse">
-                <span></span><span></span><span></span>
-            </div>
+        <div class="water-bubbles">
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
         </div>
-        <div class="cleaning-message" id="statusMsg">✨ Removing stains ✨</div>
+        <div class="fill-percent" id="fillPercentDisplay">💧 filling 0%</div>
+        <div class="loading-message" id="loadingMsg">🌊 water rising inside letters...</div>
     </div>
 </div>
 
-<!-- MAIN WEBSITE CONTENT (appears after cleaning animation) -->
+<!-- MAIN WEBSITE (appears after water fill is complete and text fades) -->
 <div class="main-content" id="mainContent">
-    <div class="brand-icon">🏡✨🧽</div>
-    <h1>Alice's Eco House Cleaning</h1>
-    <p>Your home, naturally radiant. 100% plant-based cleaning with love.</p>
-    <div style="display: flex; gap: 12px; justify-content: center; margin: 1rem 0;">
-        <span>🌿 vinegar & citrus</span>
-        <span>🍃 biodegradable</span>
-        <span>✨ crystal shine</span>
-    </div>
-    <div class="demo-note">
-        🌟 Preloader: Window getting cleaned — stains disappear! 🌟
-    </div>
-    <button id="replayBtn">▶ Replay Cleaning Animation</button>
-    <div class="footer-note">
-        🧼 natural care | Hamptons trusted
+    <div class="welcome-card">
+        <div class="brand-icon">🏡💧🌿</div>
+        <h1>Welcome to Alice's Eco House Cleaning</h1>
+        <p>Your home, naturally radiant. 100% plant-based cleaning with love. We bring nature's best to your doorstep.</p>
+        <div class="eco-badge">
+            <span class="badge">🌱 100% Natural</span>
+            <span class="badge">🧼 Professional Care</span>
+            <span class="badge">✨ Trusted Since 2016</span>
+        </div>
+        <button id="replayBtn">💧 Replay Water Fill Animation</button>
+        <div class="footer-note">Hamptons & surrounding areas | Eco-friendly promise</div>
     </div>
 </div>
 
 <script>
-    // PRELOADER PROTOTYPE: 
-    // - Only window with smoke-like stains
-    // - Cleaning wiper moves once (duration about 1.2 secs)
-    // - Stains fade out gradually during animation
-    // - After cleaning, shine effect appears, then preloader hides and main content shows.
+    // PROTOTYPE: Water fill effect inside the letters of "Alice's Cleaning"
+    // The text itself gets a gradient that moves from bottom (0% fill) to top (100% fill)
+    // As fill progresses, the text slowly fades out. When fill reaches 100%, preloader hides and main content appears.
+    // Additional wave/wobble effect + bubble animation.
     
-    const preloader = document.getElementById('preloader');
-    const mainContent = document.getElementById('mainContent');
-    const cleaningTool = document.getElementById('cleaningTool');
-    const stains = document.querySelectorAll('.stain');
-    const cleanShine = document.getElementById('cleanShine');
-    const statusMsgSpan = document.getElementById('statusMsg');
-    
-    let animationTimer = null;
-    let cleaningFinished = false;
-    
-    // Function to remove stains progressively (match with wiper animation)
-    function startStainCleaning() {
-        // Stains will disappear one by one in sync with the wiper movement (over ~1.2 seconds)
-        // We'll create a timeline: remove stains gradually at intervals
-        const stainArray = Array.from(stains);
+    (function() {
+        const preloader = document.getElementById('preloader');
+        const mainContent = document.getElementById('mainContent');
+        const waterTextEl = document.getElementById('waterText');
+        const fillPercentSpan = document.getElementById('fillPercentDisplay');
+        const loadingMsgSpan = document.getElementById('loadingMsg');
         
-        // Remove first batch quickly (top stains)
-        setTimeout(() => {
-            stainArray.forEach((stain, idx) => {
-                // Gradual removal: all stains fade over 900ms but with slight delay offsets
-                stain.style.transition = 'opacity 0.5s ease, transform 0.3s';
-                stain.style.opacity = '0';
-                stain.style.transform = 'scale(0.8)';
-            });
-            statusMsgSpan.innerHTML = '🧽 Deep cleaning in progress...';
-        }, 150);
+        let fillProgress = 0;        // 0 to 100
+        let animationFrameId = null;
+        let fillInterval = null;
+        let isComplete = false;
         
-        // Second step: ensure fully invisible after 1 sec
-        setTimeout(() => {
-            stainArray.forEach(stain => {
-                stain.style.display = 'none';
-            });
-            statusMsgSpan.innerHTML = '✨ Stains eliminated! ✨';
-        }, 950);
-    }
-    
-    // Shine effect after cleaning is done (brief glow)
-    function applyCleanShine() {
-        cleanShine.style.opacity = '1';
-        setTimeout(() => {
-            cleanShine.style.opacity = '0';
-        }, 800);
-    }
-    
-    // Function to finish preloader and show main content
-    function finishPreloaderAndShowPage() {
-        if (cleaningFinished) return;
-        cleaningFinished = true;
+        // The text element uses background-position to simulate water level inside letters.
+        // Background gradient from top (0%) to bottom (100%): initially water is at bottom.
+        // We'll set background-size: 100% 200% and then move background-position from bottom to top.
+        // Initial: background-position: 0% 100% (water at bottom, text appears empty/transparent top)
+        // Final: background-position: 0% 0% (water fully covering letters)
         
-        // Ensure all stains are hidden just in case
-        stains.forEach(stain => {
-            stain.style.opacity = '0';
-            stain.style.display = 'none';
-        });
-        
-        // Apply shine one last time for satisfaction
-        applyCleanShine();
-        
-        // Small delay to appreciate the clean window before hiding preloader
-        setTimeout(() => {
-            preloader.classList.add('hide');
-            mainContent.classList.add('visible');
-        }, 400);
-        
-        if (animationTimer) clearTimeout(animationTimer);
-    }
-    
-    // Core animation: cleaning tool runs, stains disappear, then page loads
-    function runCleaningSequence() {
-        // Reset any previous states
-        cleaningFinished = false;
-        
-        // Reset stains visibility and opacity
-        stains.forEach(stain => {
-            stain.style.display = 'block';
-            stain.style.opacity = '1';
-            stain.style.transform = 'scale(1)';
-        });
-        
-        // Reset shine
-        cleanShine.style.opacity = '0';
-        
-        // Reset cleaning tool: remove and re-add animation to restart
-        const tool = cleaningTool;
-        tool.style.animation = 'none';
-        tool.style.opacity = '0.85';
-        // Force reflow
-        void tool.offsetWidth;
-        tool.style.animation = 'wipeAcross 1.2s ease-in-out forwards';
-        
-        // Update status message
-        statusMsgSpan.innerHTML = '🧼 Scrubbing away stains...';
-        
-        // Start stain removal sequence (synchronized with wiper movement)
-        startStainCleaning();
-        
-        // After the wiping animation ends (1.2 seconds), finish up and show page
-        const animationEndHandler = () => {
-            tool.removeEventListener('animationend', animationEndHandler);
-            // Ensure stains completely removed
-            stains.forEach(stain => {
-                stain.style.opacity = '0';
-                stain.style.display = 'none';
-            });
-            statusMsgSpan.innerHTML = '✨ Window sparkling clean! ✨';
-            applyCleanShine();
+        function setWaterFill(percent) {
+            // percent: 0 (empty) -> 100 (full)
+            // The gradient moves upward: at 0% water is only at bottom edge, at 100% water covers all.
+            // We control background-position Y: from 100% (bottom) to 0% (top)
+            const positionY = 100 - percent;  // when percent=0 -> 100% (water hidden), percent=100 -> 0% (full water)
+            waterTextEl.style.backgroundPosition = `0% ${positionY}%`;
             
-            // Short pause then transition to main content (total time ~1.5 secs from start)
-            setTimeout(() => {
-                if (!cleaningFinished) {
-                    finishPreloaderAndShowPage();
+            // Also apply a subtle text fade as water fills: at 100% fill, text becomes slightly translucent then final fade handled after.
+            // But we want the text to start fading when water is almost full (like a powerpoint effect).
+            // For smoothness: reduce opacity of text when fill > 70% (optional), but we'll do full reveal later.
+            if (percent >= 100) {
+                // water full, prepare to vanish preloader
+                if (!isComplete) {
+                    isComplete = true;
+                    finishAndReveal();
                 }
-            }, 200);
-        };
-        
-        tool.addEventListener('animationend', animationEndHandler, { once: true });
-        
-        // Fallback: if animationend doesn't fire (rare), force finish after 1.5 sec
-        animationTimer = setTimeout(() => {
-            if (!cleaningFinished) {
-                finishPreloaderAndShowPage();
             }
-        }, 1600);
-    }
-    
-    // When page loads, start cleaning animation once
-    window.addEventListener('load', () => {
-        // Small delay to ensure everything rendered
-        setTimeout(() => {
-            runCleaningSequence();
-        }, 100);
-    });
-    
-    // Replay button functionality: reset preloader, replay window cleaning, then show content again
-    const replayBtn = document.getElementById('replayBtn');
-    if (replayBtn) {
-        replayBtn.addEventListener('click', () => {
-            // Clear any ongoing timers
-            if (animationTimer) clearTimeout(animationTimer);
-            cleaningFinished = false;
             
-            // Hide main content if visible
+            // update percent display
+            fillPercentSpan.innerHTML = `💧 filling ${Math.floor(percent)}%`;
+            if (percent >= 85) {
+                loadingMsgSpan.innerHTML = "✨ almost there, sparkling clean! ✨";
+            } else if (percent > 40) {
+                loadingMsgSpan.innerHTML = "🌊 water rising... letters are filling";
+            }
+        }
+        
+        // Function to animate water rising over time (~2 seconds total, smooth)
+        function startWaterFill() {
+            if (fillInterval) clearInterval(fillInterval);
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            
+            fillProgress = 0;
+            isComplete = false;
+            
+            // reset text styles and background position to initial (empty)
+            waterTextEl.style.backgroundPosition = `0% 100%`;
+            waterTextEl.style.transition = 'background-position 0.02s linear';
+            // Remove any leftover opacity fading on container
+            const container = document.querySelector('.water-text-container');
+            if (container) container.style.opacity = '1';
+            preloader.style.opacity = '1';
+            preloader.style.visibility = 'visible';
+            preloader.classList.remove('hide');
             mainContent.classList.remove('visible');
             
-            // Reset preloader visibility
+            // Reset loading message
+            loadingMsgSpan.innerHTML = "💧 water filling the letters...";
+            fillPercentSpan.innerHTML = `💧 filling 0%`;
+            
+            // Increment fill over 2000ms (2 seconds) for smooth Powerpoint-like transition
+            const duration = 2100; // ms
+            const startTime = performance.now();
+            
+            function step(now) {
+                const elapsed = now - startTime;
+                let percent = Math.min(100, (elapsed / duration) * 100);
+                setWaterFill(percent);
+                fillProgress = percent;
+                
+                if (percent < 100) {
+                    animationFrameId = requestAnimationFrame(step);
+                } else {
+                    // fill complete, the setWaterFill will trigger finishAndReveal after a tiny delay to ensure visual
+                    if (!isComplete) {
+                        setWaterFill(100);
+                        isComplete = true;
+                        finishAndReveal();
+                    }
+                    cancelAnimationFrame(animationFrameId);
+                    animationFrameId = null;
+                }
+            }
+            
+            animationFrameId = requestAnimationFrame(step);
+        }
+        
+        // After water fill completes, we also add a last "wave" shine, then fade out preloader & show main content
+        function finishAndReveal() {
+            if (window._revealTriggered) return;
+            window._revealTriggered = true;
+            
+            // final visual: ensure water fill is 100%
+            setWaterFill(100);
+            loadingMsgSpan.innerHTML = "💦 completely fresh! opening website...";
+            fillPercentSpan.innerHTML = `✨ 100% crystal clear ✨`;
+            
+            // Add a final little "wave sparkle" effect on text (add a temporary shine class)
+            waterTextEl.style.transition = 'all 0.3s';
+            waterTextEl.style.textShadow = '0 0 10px rgba(100, 150, 80, 0.5)';
+            
+            // Slight delay for the final effect, then fade out preloader and show main content
+            setTimeout(() => {
+                // fade out preloader with smooth transition
+                preloader.classList.add('hide');
+                // show main website content with fade-in scale effect
+                mainContent.classList.add('visible');
+                
+                // remove extra shine after transition
+                setTimeout(() => {
+                    if (waterTextEl) waterTextEl.style.textShadow = '';
+                }, 500);
+            }, 380);
+        }
+        
+        // Replay functionality: Reset and run water fill animation again, hide main content.
+        function replayAnimation() {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            if (window._revealTriggered) window._revealTriggered = false;
+            isComplete = false;
+            
+            // Hide main content and show preloader again
+            mainContent.classList.remove('visible');
             preloader.classList.remove('hide');
+            preloader.style.opacity = '1';
+            preloader.style.visibility = 'visible';
             
-            // Force reset of all stain visuals
-            stains.forEach(stain => {
-                stain.style.display = 'block';
-                stain.style.opacity = '1';
-                stain.style.transform = 'scale(1)';
+            // Reset any extra overlay styles
+            waterTextEl.style.transition = '';
+            waterTextEl.style.textShadow = '';
+            
+            // Reset background position to 0% 100% (empty)
+            waterTextEl.style.backgroundPosition = `0% 100%`;
+            
+            // Reset loading message and percentage
+            fillPercentSpan.innerHTML = `💧 filling 0%`;
+            loadingMsgSpan.innerHTML = "🌊 water rising inside letters...";
+            
+            // restart fill animation after a tiny frame delay to ensure reset
+            setTimeout(() => {
+                startWaterFill();
+            }, 30);
+        }
+        
+        // Attach replay button event listener
+        const replayBtn = document.getElementById('replayBtn');
+        if (replayBtn) {
+            replayBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                replayAnimation();
             });
-            
-            // Reset shine
-            cleanShine.style.opacity = '0';
-            
-            // Reset status message
-            statusMsgSpan.innerHTML = '🧼 Wiping away dirt...';
-            
-            // Re-trigger cleaning sequence
-            runCleaningSequence();
+        }
+        
+        // Initialize: on page load start the water fill animation
+        window.addEventListener('load', () => {
+            // Small delay to ensure CSS transitions ready
+            setTimeout(() => {
+                startWaterFill();
+            }, 200);
         });
-    }
-    
-    // Optional: handle any accidental edge cases for a polished feel
-    // Ensure that on window resize or anything else, preloader remains centered
-    console.log('Window cleaner prototype ready — stains disappear as wiper moves, then page appears!');
+        
+        // Additional wave effect on the text: subtle gradient wave motion (already in keyframes)
+        // To make water inside letters feel dynamic, we add a small CSS animation to the gradient's position X?
+        // But the wave-overlay::before gives subtle wavy movement. Enhance by shifting background gradient slightly over time.
+        let waveX = 0;
+        function waveEffectLoop() {
+            if (!waterTextEl) return;
+            // only if not complete or not hidden? subtle wave
+            if (!preloader.classList.contains('hide')) {
+                waveX = (waveX + 0.3) % 6;
+                waterTextEl.style.backgroundPositionX = `${waveX}px`;
+            }
+            requestAnimationFrame(waveEffectLoop);
+        }
+        waveEffectLoop();
+        
+        // For mobile: ensure text stays centered and font is readable
+        // Also note: we used background-clip: text, and text color transparent works perfectly.
+        // For browsers that don't support background-clip: text, we add a fallback but all modern browsers support.
+        
+        console.log('Preloader ready: water fills the letters "Alice\'s Cleaning" → fades → reveals site.');
+    })();
 </script>
 
+<!-- Extra style for better water simulation inside letters -->
 <style>
-    /* Extra polish to make the stains look like smoke/dirt */
-    .stain {
-        box-shadow: 0 0 12px rgba(0,0,0,0.2);
-        transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease;
+    /* Ensure the background-clip text effect works cross-browser */
+    .water-fill-text {
+        background: linear-gradient(
+            to bottom,
+            #6e9856,
+            #8ab86a,
+            #b1da92,
+            #cbe8b0
+        );
+        background-size: 100% 200%;
+        background-repeat: no-repeat;
+        background-position: 0% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        transition: background-position 0.05s linear;
     }
-    .cleaning-tool {
-        background: linear-gradient(120deg, #88a072, #5e7a4a);
-        border-radius: 30px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    
+    /* Add subtle water wave animation on the whole text container */
+    .water-text-container {
+        animation: gentleRise 0.5s ease-out;
     }
-    .window-frame {
-        transition: box-shadow 0.2s;
+    
+    @keyframes gentleRise {
+        0% { opacity: 0; transform: scale(0.98); }
+        100% { opacity: 1; transform: scale(1); }
     }
-    .window-frame:hover {
-        box-shadow: 0 18px 35px rgba(90, 111, 74, 0.3);
-    }
-    /* Slight glass reflection effect */
-    .window-glass::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -20%;
-        width: 60%;
-        height: 100%;
-        background: linear-gradient(90deg, rgba(255,255,245,0.2), transparent);
-        transform: skewX(-15deg);
-        pointer-events: none;
-    }
-    .clean-shine {
-        background: radial-gradient(circle at 30% 40%, rgba(255, 250, 180, 0.6), transparent 80%);
+    
+    /* Additional water drip effect on the letters (optional) */
+    .wave-overlay::before {
         mix-blend-mode: overlay;
+        opacity: 0.5;
     }
-    .loading-status span {
-        font-weight: 500;
-    }
-    /* Ensure window is responsive on smaller screens */
+    
+    /* responsive font tuning */
     @media (max-width: 550px) {
-        .window-frame {
-            width: 260px;
-            height: 260px;
+        .water-fill-text {
+            font-size: clamp(2.3rem, 10vw, 3.8rem);
+            letter-spacing: -0.01em;
         }
-        .stain-1 { width: 55px; height: 55px; }
-        .stain-2 { width: 70px; height: 70px; }
-        .stain-3 { width: 45px; height: 45px; }
-        .stain-4 { width: 65px; height: 65px; }
-        .stain-5 { width: 40px; height: 40px; }
-        .stain-6 { width: 50px; height: 50px; }
-        .stain-7 { width: 45px; height: 45px; }
-        .cleaning-tool {
-            height: 28px;
+        .wave-overlay::before {
+            font-size: clamp(2.3rem, 10vw, 3.8rem);
         }
-        .animation-container {
-            padding: 1.2rem 1.5rem;
+        .fill-percent {
+            font-size: 0.75rem;
         }
+    }
+    
+    /* make preloader background match cream tones */
+    .preloader {
+        background: radial-gradient(ellipse at center, #f7f4ed 0%, #e6e0d4 100%);
+    }
+    
+    /* shine reflection for text */
+    .water-fill-text::after {
+        display: none;
+    }
+    
+    /* smoothness for fill display */
+    #fillPercentDisplay {
+        font-family: monospace;
+        background: rgba(90, 111, 74, 0.1);
+        backdrop-filter: blur(4px);
     }
 </style>
 </body>
