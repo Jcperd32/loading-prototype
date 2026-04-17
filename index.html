@@ -9,7 +9,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none; /* Prevents accidental selection on animation */
+            user-select: none;
         }
 
         body {
@@ -17,7 +17,7 @@
             height: 100vh;
             overflow: hidden;
             font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, 'Poppins', 'Helvetica Neue', sans-serif;
-            background: #f3efe5;  /* soft creamy base */
+            background: #f3efe5;
         }
 
         /* MAIN LOADING SCREEN CONTAINER */
@@ -28,17 +28,15 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(135deg, #eef0e0 0%, #dbe3ce 100%);
-            /* soft light green to olive undertone cream */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 1000;
             transition: opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-            backdrop-filter: blur(0px);
         }
 
-        /* subtle texture overlay for refinement */
+        /* subtle texture overlay */
         .loading-screen::before {
             content: "";
             position: absolute;
@@ -52,7 +50,7 @@
             pointer-events: none;
         }
 
-        /* CARD-LIKE ANIMATION ZONE */
+        /* CARD ANIMATION ZONE */
         .animation-stage {
             background: rgba(250, 248, 240, 0.65);
             backdrop-filter: blur(2px);
@@ -63,7 +61,6 @@
             margin-bottom: 2.5rem;
         }
 
-        /* CANVAS where tools morph */
         .morph-canvas {
             width: 280px;
             height: 280px;
@@ -72,7 +69,6 @@
             filter: drop-shadow(0 8px 12px rgba(70, 60, 40, 0.1));
         }
 
-        /* subtle caption / loading text */
         .loading-caption {
             margin-top: 2rem;
             font-weight: 450;
@@ -84,7 +80,6 @@
             padding: 0.5rem 1.5rem;
             border-radius: 60px;
             border: 0.5px solid #dad1ba;
-            font-family: inherit;
         }
 
         .loading-caption span {
@@ -92,7 +87,6 @@
             color: #5f6b3c;
         }
 
-        /* progress bar - minimalist, elegant */
         .progress-container {
             width: 240px;
             margin-top: 1.8rem;
@@ -108,10 +102,9 @@
             height: 100%;
             background: #83945e;
             border-radius: 100px;
-            transition: width 0.25s linear;
+            transition: width 0.1s linear;
         }
 
-        /* loading percentage */
         .percent-text {
             margin-top: 0.6rem;
             font-size: 0.8rem;
@@ -120,7 +113,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* professional subtle brand line */
         .brand-note {
             position: absolute;
             bottom: 28px;
@@ -133,7 +125,6 @@
             letter-spacing: 1px;
         }
 
-        /* content that appears after loading (hidden initially) */
         .main-content {
             opacity: 0;
             visibility: hidden;
@@ -167,7 +158,6 @@
             line-height: 1.5;
         }
 
-        /* responsive */
         @media (max-width: 550px) {
             .animation-stage {
                 padding: 1rem 2rem;
@@ -183,7 +173,7 @@
 
 <div class="loading-screen" id="loadingScreen">
     <div class="animation-stage">
-        <canvas id="toolCanvas" class="morph-canvas" width="300" height="300" style="width:100%; max-width:300px; height:auto; aspect-ratio:1/1"></canvas>
+        <canvas id="toolCanvas" class="morph-canvas" width="300" height="300" style="width:280px; height:280px"></canvas>
     </div>
     <div class="loading-caption">
         ✨ <span>preparing essentials</span> ✨
@@ -204,142 +194,90 @@
 
 <script>
     (function(){
-        // --------------------------------------------------------------
-        // PROFESSIONAL MORPHING SEQUENCE: BROOM -> MOP -> VACUUM -> DUSTER -> SQUEEGEE
-        // using canvas vector-like path interpolation (custom shapes)
-        // each tool is represented as a set of control points & we morph weights.
-        // To achieve high quality & detailed morph, we use a hybrid approach:
-        // Each tool defines key features (paths). We'll do shape tween between 2 consecutive tools.
-        // But since we need 5 tools morphing in loop (for loading screen), we create a cyclic transition.
-        // Loading progress runs from 0% to 100% over 5.5 seconds (adjustable) and each tool occupies a segment.
-        // While loading, animation cycles: broom -> mop -> vacuum -> duster -> squeegee -> (repeat or stop at end)
-        // However, loading only completes once 100% reached, then exit. For professional loading, 
-        // we will play the full morph cycle exactly ONCE from start to end? No — loading can simulate asset loading.
-        // We'll map progress: 0% = broom, 25% = mop, 50% = vacuum, 75% = duster, 100% = squeegee (final).
-        // Between these intervals, we morph smoothly between current and next tool.
-        // To make it buttery smooth, we implement custom shape interpolation.
-        // For simplicity & high detail, each cleaning tool is drawn via SVG-like path commands using canvas bezier curves,
-        // but for morphing we need to interpolate between two sets of anchor points. We'll design parametric shape description.
-        // Approach: define each tool as an array of "segments" (moveTo, lineTo, bezierCurveTo) but with fixed number of points?
-        // Better: For each tool, we generate a stylized silhouette using a set of dynamic points that can interpolate.
-        // Instead of heavy point matching, we create custom morphing by blending drawing parameters using tween factor.
-        // We'll create 5 distinct drawing functions, and in each frame we compute blend factor between current tool index & next.
-        // Then we 'mix' graphical parameters (positions, angles, lengths) to get intermediate representation.
-        // That ensures every frame morphs naturally and looks like one tool transforms to another.
-        
-        // define tool metadata
-        const tools = ['broom', 'mop', 'vacuum', 'duster', 'squeegee'];
-        const totalTools = tools.length;
-        
-        // animation state for loading simulation
-        let startTime = null;
-        let animationFrameId = null;
-        let loadingComplete = false;
-        
+        // Get elements
         const canvas = document.getElementById('toolCanvas');
         const ctx = canvas.getContext('2d');
         
-        // set canvas actual dimensions (retina friendly)
-        function resizeCanvas() {
-            const container = canvas.parentElement;
-            const size = Math.min(280, window.innerWidth * 0.5);
-            canvas.style.width = `${size}px`;
-            canvas.style.height = `${size}px`;
-            canvas.width = 300;
-            canvas.height = 300;
-            drawFrame(0); // initial draw
-        }
-        window.addEventListener('resize', () => { if(!loadingComplete) resizeCanvas(); });
+        // FIX: Ensure canvas dimensions are set properly
+        canvas.width = 300;
+        canvas.height = 300;
         
-        // ---- PROFESSIONAL CUSTOM DRAWING WITH MORPH BLENDING ----
-        // Instead of random, we define each tool's key parameters:
-        // For broom: handle + bristle fan; mop: handle + mop head (rectangular + strings)
-        // Vacuum: canister + hose/nozzle; duster: handle + fluffy feathers; squeegee: handle + rubber blade.
-        // We will use a unified coordinate system (0-1 normalized, center 150,150, scale 140).
-        // For interpolation we define an object containing all visual control attributes.
+        // Loading state
+        let loadingComplete = false;
+        let animationFrameId = null;
+        let startTimestamp = null;
+        const loadingDuration = 5200; // 5.2 seconds
         
-        // define tool descriptors (parametric)
-        function getToolParams(toolName, t = 1) {
-            // t = 1 gives exact shape, but for morph we compute mix between two params.
-            // We'll return shape attributes: handleAngle, handleLength, headType, extra factors.
-            // Since full morph needs different geometries, we'll write a general drawing function that uses param weights.
-            // to keep it robust, we manually draw based on morph factor between two consecutive tools.
-            // Let's implement a direct interpolated drawer: given factor (0..1) from toolA to toolB.
-            // but for 5 step sequence we need dynamic pairs. Best: on each frame compute exact progress (0-1 global)
-            // then determine tool index and intra tween. We'll call drawing function with global morph factor.
-        }
+        // ---------- PROFESSIONAL MORPHING DRAWING FUNCTIONS ----------
+        // Each function receives a 't' value from 0 to 1 and draws the interpolated shape
+        // between two consecutive cleaning tools.
         
-        // Better: unified drawing that accepts a 'blend' array of tool contributions? Not needed.
-        // We implement a custom interpolated drawer for each adjacent pair: broom->mop, mop->vacuum, vacuum->duster, duster->squeegee.
-        // Given a value 'mix' 0..1 for transition from current to next, we call specialized morph function.
-        // This gives full control and detailed shape transformation.
-        
-        // ============== INDIVIDUAL MORPHING FUNCTIONS ===============
-        // Each function receives ctx, width, height, t (0 to 1) where 0 = first tool, 1 = second tool.
-        // They are tailor-made for smooth & professional transformation.
-        
-        // 1. Broom (t=0) -> MOP (t=1)
+        // 1. BROOM (t=0) -> MOP (t=1)
         function drawBroomToMop(ctx, t) {
             ctx.clearRect(0, 0, 300, 300);
             ctx.save();
             ctx.translate(150, 150);
-            // handle base properties
-            const handleAngle = -0.25 * Math.PI + (t * 0.05); // slight shift
-            const handleLength = 95 - (t * 8);  // broom handle slightly longer, mop shorter
-            const handleWidth = 8;
-            // handle color: olive to soft brown
-            const handleColor = `rgba(105, 95, 65, ${1 - t*0.2})`;
-            ctx.beginPath();
-            const startX = -15 + t * 3;
-            const startY = 65 - t * 12;
+            
+            // Handle (shared element)
+            const handleAngle = -0.28 * Math.PI + (t * 0.08);
+            const handleLength = 98 - (t * 10);
+            const startX = -12;
+            const startY = 58 - (t * 6);
             const endX = startX + Math.sin(handleAngle) * handleLength;
             const endY = startY + Math.cos(handleAngle) * handleLength;
-            ctx.moveTo(startX - handleWidth/2, startY);
-            ctx.lineTo(endX - handleWidth/2, endY);
-            ctx.lineTo(endX + handleWidth/2, endY);
-            ctx.lineTo(startX + handleWidth/2, startY);
-            ctx.fillStyle = handleColor;
+            
+            // Draw wooden handle
+            ctx.beginPath();
+            ctx.moveTo(startX - 6, startY);
+            ctx.lineTo(endX - 5, endY);
+            ctx.lineTo(endX + 5, endY);
+            ctx.lineTo(startX + 6, startY);
+            ctx.fillStyle = `rgba(110, 90, 60, 0.95)`;
             ctx.fill();
             
-            // Broom head part (bristle fan)
-            if (t < 0.9) {
-                const bristleFactor = Math.max(0, 1 - t * 1.2);
+            // BROOM part (fades out)
+            if (t < 0.85) {
+                const broomIntensity = Math.max(0, 1 - t / 0.85);
                 ctx.beginPath();
-                ctx.moveTo(endX - 12, endY);
-                ctx.quadraticCurveTo(endX + (1-t)*6, endY + 18 * (1-t), endX + (8 - t*12), endY + 24 * bristleFactor);
-                ctx.lineTo(endX - (8 - t*8), endY + 24 * bristleFactor);
-                ctx.quadraticCurveTo(endX - (1-t)*6, endY + 18 * (1-t), endX + 12, endY);
-                ctx.fillStyle = `rgba(125, 110, 70, ${1 - t*0.7})`;
+                ctx.moveTo(endX - 14, endY);
+                ctx.quadraticCurveTo(endX + (1-t)*8, endY + 22 * broomIntensity, endX + 12 * broomIntensity, endY + 28 * broomIntensity);
+                ctx.lineTo(endX - 12 * broomIntensity, endY + 28 * broomIntensity);
+                ctx.quadraticCurveTo(endX - (1-t)*8, endY + 22 * broomIntensity, endX + 14, endY);
+                ctx.fillStyle = `rgba(145, 115, 70, ${0.9 * broomIntensity})`;
                 ctx.fill();
-                // bristle lines
-                for(let i=0; i<8; i++) {
+                
+                // Bristle details
+                for(let i = 0; i < 10; i++) {
                     ctx.beginPath();
-                    const off = -10 + i*3;
-                    ctx.moveTo(endX + off, endY);
-                    ctx.lineTo(endX + off + (1-t)*7, endY + 18 * (1-t));
-                    ctx.strokeStyle = `rgba(90, 70, 40, ${0.6*(1-t)})`;
-                    ctx.lineWidth = 1.2;
+                    const offset = -12 + i * 2.8;
+                    ctx.moveTo(endX + offset, endY);
+                    ctx.lineTo(endX + offset + (1-t)*6, endY + 20 * broomIntensity);
+                    ctx.strokeStyle = `rgba(100, 75, 45, ${0.7 * broomIntensity})`;
+                    ctx.lineWidth = 1.3;
                     ctx.stroke();
                 }
             }
             
-            // Mop head (appears as t increases)
-            if (t > 0.1) {
-                const mopStrength = Math.min(1, Math.max(0, (t - 0.1)/0.9));
+            // MOP part (appears)
+            if (t > 0.15) {
+                const mopIntensity = Math.min(1, Math.max(0, (t - 0.15) / 0.85));
+                const mopX = endX + 2;
+                const mopY = endY + 8 * mopIntensity;
+                
+                // Mop head base
                 ctx.beginPath();
-                const mopX = endX + (3 - mopStrength*2);
-                const mopY = endY + 6 * mopStrength;
-                ctx.ellipse(mopX, mopY + 12 * mopStrength, 12 + mopStrength*2, 16 * mopStrength, 0, 0, Math.PI*2);
-                ctx.fillStyle = `rgba(160, 140, 100, ${0.85 * mopStrength})`;
+                ctx.ellipse(mopX, mopY + 10 * mopIntensity, 14, 18 * mopIntensity, 0, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(165, 140, 100, ${0.85 * mopIntensity})`;
                 ctx.fill();
-                // mop strings
-                for(let s=0; s<12; s++) {
+                
+                // Mop strings/fringes
+                for(let s = 0; s < 14; s++) {
                     ctx.beginPath();
-                    const angleOff = -0.6 + s*0.12;
-                    ctx.moveTo(mopX + Math.sin(angleOff)*8, mopY + 4);
-                    ctx.lineTo(mopX + Math.sin(angleOff)*12, mopY + 22 * mopStrength);
-                    ctx.strokeStyle = `rgba(115, 90, 60, ${0.6 * mopStrength})`;
-                    ctx.lineWidth = 1.5;
+                    const angleOff = -0.7 + s * 0.12;
+                    ctx.moveTo(mopX + Math.sin(angleOff) * 9, mopY + 3);
+                    ctx.lineTo(mopX + Math.sin(angleOff) * 14, mopY + 28 * mopIntensity);
+                    ctx.strokeStyle = `rgba(120, 95, 65, ${0.65 * mopIntensity})`;
+                    ctx.lineWidth = 1.4;
                     ctx.stroke();
                 }
             }
@@ -348,93 +286,120 @@
         
         // 2. MOP (t=0) -> VACUUM (t=1)
         function drawMopToVacuum(ctx, t) {
-            ctx.clearRect(0,0,300,300);
+            ctx.clearRect(0, 0, 300, 300);
             ctx.save();
-            ctx.translate(150,150);
-            const handleAngle = -0.22 * Math.PI + t * 0.1;
-            const handleLength = 85 - t * 12;
+            ctx.translate(150, 150);
+            
+            const handleAngle = -0.25 * Math.PI + (t * 0.12);
+            const handleLength = 88 - (t * 14);
             const startX = -10;
-            const startY = 58 - t*10;
+            const startY = 55 - (t * 8);
             const endX = startX + Math.sin(handleAngle) * handleLength;
             const endY = startY + Math.cos(handleAngle) * handleLength;
-            // handle
+            
+            // Handle
             ctx.beginPath();
-            ctx.rect(startX-5, startY-3, 10, handleLength);
-            ctx.fillStyle = `rgba(100, 85, 60, 0.9)`;
+            ctx.rect(startX - 5, startY - 3, 10, handleLength);
+            ctx.fillStyle = `rgba(105, 88, 62, 0.92)`;
             ctx.fill();
-            // mop head (fading)
-            if(t<0.8){
-                const mopAlpha = 1 - t/0.8;
+            
+            // Mop head fading
+            if(t < 0.8) {
+                const mopAlpha = 1 - t / 0.8;
                 ctx.beginPath();
-                ctx.ellipse(endX-2, endY+12, 14, 18*mopAlpha, 0,0, Math.PI*2);
-                ctx.fillStyle = `rgba(145, 120, 85, ${0.8*mopAlpha})`;
+                ctx.ellipse(endX - 2, endY + 14, 15, 20 * mopAlpha, 0, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(155, 130, 90, ${0.8 * mopAlpha})`;
                 ctx.fill();
             }
-            // Vacuum part (body appears)
-            if(t>0.2){
-                const vacIntensity = Math.min(1, (t-0.2)/0.8);
-                const bodyX = endX + 8 * vacIntensity;
-                const bodyY = endY - 10 * vacIntensity;
+            
+            // Vacuum cleaner appearing
+            if(t > 0.2) {
+                const vacIntensity = Math.min(1, Math.max(0, (t - 0.2) / 0.8));
+                const bodyX = endX + 10 * vacIntensity;
+                const bodyY = endY - 8 * vacIntensity;
+                
+                // Main vacuum body
                 ctx.beginPath();
-                ctx.ellipse(bodyX+5, bodyY+12, 18*vacIntensity, 14*vacIntensity, 0,0,Math.PI*2);
-                ctx.fillStyle = `rgba(70, 85, 60, ${0.9*vacIntensity})`;
+                ctx.ellipse(bodyX + 6, bodyY + 14, 20 * vacIntensity, 16 * vacIntensity, 0, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(75, 88, 62, ${0.9 * vacIntensity})`;
                 ctx.fill();
+                
+                // Vacuum canister detail
                 ctx.beginPath();
-                ctx.ellipse(bodyX+2, bodyY+24, 10*vacIntensity, 8*vacIntensity, 0,0,Math.PI*2);
-                ctx.fillStyle = `rgba(55, 65, 45, ${0.8*vacIntensity})`;
+                ctx.ellipse(bodyX + 4, bodyY + 28, 12 * vacIntensity, 10 * vacIntensity, 0, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(60, 70, 50, ${0.85 * vacIntensity})`;
                 ctx.fill();
-                // nozzle / hose
+                
+                // Hose/nozzle
                 ctx.beginPath();
-                ctx.moveTo(bodyX+8, bodyY+16);
-                ctx.lineTo(bodyX+28*vacIntensity, bodyY+20*vacIntensity);
-                ctx.lineWidth = 5*vacIntensity;
-                ctx.strokeStyle = `rgba(45,55,40,${0.8*vacIntensity})`;
+                ctx.moveTo(bodyX + 12, bodyY + 18);
+                ctx.lineTo(bodyX + 32 * vacIntensity, bodyY + 26 * vacIntensity);
+                ctx.lineWidth = 6 * vacIntensity;
+                ctx.strokeStyle = `rgba(50, 60, 42, ${0.8 * vacIntensity})`;
                 ctx.stroke();
+                
+                // Wheel detail
+                ctx.beginPath();
+                ctx.arc(bodyX - 4, bodyY + 34, 7 * vacIntensity, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(45, 55, 38, ${0.7 * vacIntensity})`;
+                ctx.fill();
             }
             ctx.restore();
         }
         
         // 3. VACUUM (t=0) -> DUSTER (t=1)
         function drawVacuumToDuster(ctx, t) {
-            ctx.clearRect(0,0,300,300);
+            ctx.clearRect(0, 0, 300, 300);
             ctx.save();
-            ctx.translate(150,150);
-            const vacAlpha = 1 - Math.min(1, t*1.2);
-            // Vacuum body fading out
-            if(vacAlpha>0){
+            ctx.translate(150, 150);
+            
+            const vacAlpha = 1 - Math.min(1, t * 1.2);
+            // Vacuum fading
+            if(vacAlpha > 0.05) {
                 ctx.beginPath();
-                ctx.ellipse(-8, 18, 22*vacAlpha, 18*vacAlpha, 0,0,Math.PI*2);
-                ctx.fillStyle = `rgba(75,85,58, ${0.8*vacAlpha})`;
+                ctx.ellipse(-10, 20, 22 * vacAlpha, 18 * vacAlpha, 0, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(78, 90, 60, ${0.85 * vacAlpha})`;
                 ctx.fill();
                 ctx.beginPath();
-                ctx.ellipse(-5, 35, 12*vacAlpha, 10*vacAlpha, 0,0,Math.PI*2);
+                ctx.ellipse(-6, 38, 13 * vacAlpha, 11 * vacAlpha, 0, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(62, 72, 48, ${0.8 * vacAlpha})`;
                 ctx.fill();
                 ctx.beginPath();
-                ctx.moveTo(8, 10);
-                ctx.lineTo(20*vacAlpha, 25*vacAlpha);
-                ctx.lineWidth = 5*vacAlpha;
+                ctx.moveTo(6, 12);
+                ctx.lineTo(22 * vacAlpha, 28 * vacAlpha);
+                ctx.lineWidth = 5 * vacAlpha;
+                ctx.strokeStyle = `rgba(55, 65, 45, ${0.75 * vacAlpha})`;
                 ctx.stroke();
             }
-            // Duster emerges
-            const dustIntensity = Math.min(1, Math.max(0, (t-0.2)/0.8));
-            if(dustIntensity>0){
-                const handleX = -10;
-                const handleY = 30 - dustIntensity*6;
+            
+            // Duster emerging
+            const dustIntensity = Math.min(1, Math.max(0, (t - 0.2) / 0.8));
+            if(dustIntensity > 0) {
+                const handleX = -8;
+                const handleY = 28 - dustIntensity * 4;
+                
+                // Handle
                 ctx.beginPath();
-                ctx.rect(handleX-4, handleY-15, 8, 45);
-                ctx.fillStyle = `rgba(140,115,80,0.9)`;
+                ctx.rect(handleX - 4, handleY - 18, 8, 50);
+                ctx.fillStyle = `rgba(135, 108, 78, 0.92)`;
                 ctx.fill();
-                // fluffy feather head
+                
+                // Fluffy duster head
                 ctx.beginPath();
-                ctx.ellipse(handleX+2, handleY-20, 16*dustIntensity, 20*dustIntensity, 0.3, 0, Math.PI*2);
-                ctx.fillStyle = `rgba(205,185,145, ${0.9*dustIntensity})`;
+                ctx.ellipse(handleX + 2, handleY - 24, 18 * dustIntensity, 22 * dustIntensity, 0.2, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(215, 190, 150, ${0.95 * dustIntensity})`;
                 ctx.fill();
-                for(let f=0; f<12; f++){
+                
+                // Feather details
+                for(let f = 0; f < 14; f++) {
                     ctx.beginPath();
-                    let angle = f*0.5;
-                    let rad = 12*dustIntensity;
-                    ctx.ellipse(handleX+2+Math.sin(angle)*rad*0.7, handleY-22+Math.cos(angle*1.3)*rad*0.8, 3, 8, angle, 0, Math.PI*2);
-                    ctx.fillStyle = `rgba(215,190,135, ${0.6*dustIntensity})`;
+                    const angleOffset = f * 0.52;
+                    const radX = 14 * dustIntensity;
+                    const radY = 16 * dustIntensity;
+                    ctx.ellipse(handleX + 2 + Math.sin(angleOffset) * radX * 0.6, 
+                               handleY - 26 + Math.cos(angleOffset * 1.2) * radY * 0.7, 
+                               3.5, 9, angleOffset, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(225, 200, 155, ${0.7 * dustIntensity})`;
                     ctx.fill();
                 }
             }
@@ -443,149 +408,194 @@
         
         // 4. DUSTER (t=0) -> SQUEEGEE (t=1)
         function drawDusterToSqueegee(ctx, t) {
-            ctx.clearRect(0,0,300,300);
+            ctx.clearRect(0, 0, 300, 300);
             ctx.save();
-            ctx.translate(150,150);
-            const dustAlpha = 1 - Math.min(1, t*1.1);
-            if(dustAlpha>0){
+            ctx.translate(150, 150);
+            
+            const dustAlpha = 1 - Math.min(1, t * 1.15);
+            if(dustAlpha > 0.05) {
+                // Duster handle
                 ctx.beginPath();
-                ctx.ellipse(-5, -15, 18*dustAlpha, 22*dustAlpha, 0,0,Math.PI*2);
-                ctx.fillStyle = `rgba(195,170,125, ${0.85*dustAlpha})`;
+                ctx.rect(-12, 6, 8, 48);
+                ctx.fillStyle = `rgba(125, 100, 72, ${0.85 * dustAlpha})`;
                 ctx.fill();
+                // Duster head
                 ctx.beginPath();
-                ctx.rect(-12, 8, 8, 45);
-                ctx.fillStyle = `rgba(125,100,70,0.8)`;
+                ctx.ellipse(-6, -18, 20 * dustAlpha, 24 * dustAlpha, 0, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(205, 178, 138, ${0.9 * dustAlpha})`;
                 ctx.fill();
             }
-            const sqIntensity = Math.min(1, Math.max(0, (t-0.2)/0.8));
-            if(sqIntensity>0){
-                // squeegee handle
+            
+            // Squeegee appearing
+            const sqIntensity = Math.min(1, Math.max(0, (t - 0.18) / 0.82));
+            if(sqIntensity > 0) {
+                // Squeegee handle (longer)
                 ctx.beginPath();
-                ctx.rect(-12, 15, 8, 58);
-                ctx.fillStyle = `rgba(100,88,65,0.9)`;
+                ctx.rect(-10, 12, 9, 62);
+                ctx.fillStyle = `rgba(108, 92, 68, 0.94)`;
                 ctx.fill();
-                // rubber blade
+                
+                // Metal connector
                 ctx.beginPath();
-                ctx.moveTo(-25, 72);
-                ctx.lineTo(20, 72);
-                ctx.lineTo(22, 80);
-                ctx.lineTo(-27, 80);
-                ctx.fillStyle = `rgba(70,75,60, ${0.95*sqIntensity})`;
+                ctx.rect(-14, 72, 17, 6);
+                ctx.fillStyle = `rgba(130, 120, 95, ${0.9 * sqIntensity})`;
                 ctx.fill();
+                
+                // Rubber blade (professional squeegee shape)
                 ctx.beginPath();
-                ctx.rect(-24, 78, 46, 5);
-                ctx.fillStyle = `rgba(55,60,48,0.9)`;
+                ctx.moveTo(-28, 78);
+                ctx.lineTo(20, 78);
+                ctx.lineTo(23, 88);
+                ctx.lineTo(-31, 88);
+                ctx.fillStyle = `rgba(65, 72, 55, ${0.96 * sqIntensity})`;
                 ctx.fill();
-                // metal accent
+                
+                // Blade edge detail
                 ctx.beginPath();
-                ctx.moveTo(-22, 70);
-                ctx.lineTo(18, 70);
-                ctx.lineWidth = 2.5;
-                ctx.strokeStyle = `#b0a07a`;
+                ctx.rect(-27, 86, 49, 4);
+                ctx.fillStyle = `rgba(50, 58, 42, ${0.9 * sqIntensity})`;
+                ctx.fill();
+                
+                // Shine line on blade
+                ctx.beginPath();
+                ctx.moveTo(-25, 80);
+                ctx.lineTo(18, 80);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = `rgba(210, 205, 170, ${0.7 * sqIntensity})`;
                 ctx.stroke();
             }
             ctx.restore();
         }
         
-        // map global progress to segment and intra tween
-        let lastProgress = 0;
-        function drawBasedOnProgress(progress01) { // 0..1
-            if(progress01 >= 0.999) {
-                // final frame: draw squeegee perfectly
+        // Main drawing dispatcher based on global progress (0 to 1)
+        function drawByProgress(progress) {
+            if(progress >= 0.99) {
+                // Final frame: perfect squeegee
                 drawDusterToSqueegee(ctx, 1.0);
                 return;
             }
-            // Determine which segment: each tool occupies 0.2 range, except transitions morph inside each interval.
-            // We have 5 tools => 4 transitions (broom->mop, mop->vacuum, vacuum->duster, duster->squeegee)
-            // However from 0 to 0.2 = pure broom? no for smoothness, morphing across entire range:
-            // better: segment i from 0 to 0.25 for first morph, but to make all tools appear, we map:
-            // For 0 to 0.2: broom -> mop morph, at 0 = broom, 0.2 = mop.
-            // 0.2 to 0.4: mop -> vacuum morph, 0.2=mop, 0.4=vacuum.
-            // 0.4 to 0.6: vacuum -> duster, 0.6=duster.
-            // 0.6 to 0.8: duster -> squeegee, 0.8=squeegee.
-            // 0.8 to 1.0: hold squeegee (full), but we also show perfect final.
-            let morphT, segment;
-            if(progress01 <= 0.2) {
-                segment = 0;
-                morphT = progress01 / 0.2;  // broom -> mop
-                drawBroomToMop(ctx, morphT);
+            
+            // Map progress through 4 morphing segments:
+            // 0.00 - 0.22 : broom -> mop
+            // 0.22 - 0.44 : mop -> vacuum
+            // 0.44 - 0.66 : vacuum -> duster
+            // 0.66 - 0.88 : duster -> squeegee
+            // 0.88 - 1.00 : hold final squeegee (smooth)
+            
+            if(progress <= 0.22) {
+                const t = progress / 0.22;  // 0 to 1
+                drawBroomToMop(ctx, t);
             } 
-            else if(progress01 <= 0.4) {
-                segment = 1;
-                morphT = (progress01 - 0.2) / 0.2;
-                drawMopToVacuum(ctx, morphT);
+            else if(progress <= 0.44) {
+                const t = (progress - 0.22) / 0.22;
+                drawMopToVacuum(ctx, t);
             }
-            else if(progress01 <= 0.6) {
-                segment = 2;
-                morphT = (progress01 - 0.4) / 0.2;
-                drawVacuumToDuster(ctx, morphT);
+            else if(progress <= 0.66) {
+                const t = (progress - 0.44) / 0.22;
+                drawVacuumToDuster(ctx, t);
             }
-            else if(progress01 <= 0.8) {
-                segment = 3;
-                morphT = (progress01 - 0.6) / 0.2;
-                drawDusterToSqueegee(ctx, morphT);
+            else if(progress <= 0.88) {
+                const t = (progress - 0.66) / 0.22;
+                drawDusterToSqueegee(ctx, t);
             }
             else {
-                // final zone: perfect squeegee
+                // Final zone: show fully formed squeegee
                 drawDusterToSqueegee(ctx, 1.0);
             }
         }
         
-        // loading simulation: duration 5.2 seconds smooth
-        let loadingDuration = 5200; // ms
-        let startTimestamp = null;
-        
-        function updateLoading(now) {
-            if(loadingComplete) return;
-            if(startTimestamp === null) startTimestamp = now;
-            let elapsed = now - startTimestamp;
-            let rawProgress = Math.min(1, elapsed / loadingDuration);
-            let easedProgress = easeOutCubic(rawProgress);
-            // update progress bar & percent
-            const percent = Math.floor(easedProgress * 100);
-            document.getElementById('progressFill').style.width = `${percent}%`;
-            document.getElementById('percentLabel').innerText = `${percent}%`;
-            // draw canvas morph
-            drawBasedOnProgress(easedProgress);
-            
-            if(rawProgress >= 1.0) {
-                // loading complete
-                loadingComplete = true;
-                if(animationFrameId) cancelAnimationFrame(animationFrameId);
-                // finalize to squeegee crisp
-                drawDusterToSqueegee(ctx, 1.0);
-                // fade out loading screen, reveal content
-                const loadingEl = document.getElementById('loadingScreen');
-                const mainEl = document.getElementById('mainContent');
-                loadingEl.style.opacity = '0';
-                setTimeout(() => {
-                    loadingEl.style.display = 'none';
-                    mainEl.style.visibility = 'visible';
-                    mainEl.style.opacity = '1';
-                }, 800);
-                return;
-            }
-            animationFrameId = requestAnimationFrame(updateLoading);
-        }
-        
+        // Easing function for smooth professional feel
         function easeOutCubic(x) {
             return 1 - Math.pow(1 - x, 3);
         }
         
-        function startLoading() {
-            resizeCanvas();
-            startTimestamp = null;
+        // Progress bar update and animation loop
+        function updateLoading(now) {
+            if(loadingComplete) return;
+            
+            if(startTimestamp === null) {
+                startTimestamp = now;
+            }
+            
+            let elapsed = now - startTimestamp;
+            let rawProgress = Math.min(1, elapsed / loadingDuration);
+            let easedProgress = easeOutCubic(rawProgress);
+            
+            // Update UI
+            const percent = Math.floor(easedProgress * 100);
+            const progressFill = document.getElementById('progressFill');
+            const percentLabel = document.getElementById('percentLabel');
+            if(progressFill) progressFill.style.width = `${percent}%`;
+            if(percentLabel) percentLabel.innerText = `${percent}%`;
+            
+            // Draw the current morph state
+            drawByProgress(easedProgress);
+            
+            if(rawProgress >= 1.0) {
+                // Loading complete
+                loadingComplete = true;
+                if(animationFrameId) cancelAnimationFrame(animationFrameId);
+                
+                // Final draw as perfect squeegee
+                drawDusterToSqueegee(ctx, 1.0);
+                
+                // Fade out loading screen, reveal main content
+                const loadingScreen = document.getElementById('loadingScreen');
+                const mainContent = document.getElementById('mainContent');
+                
+                if(loadingScreen) {
+                    loadingScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                        if(mainContent) {
+                            mainContent.style.visibility = 'visible';
+                            mainContent.style.opacity = '1';
+                        }
+                    }, 800);
+                }
+                return;
+            }
+            
             animationFrameId = requestAnimationFrame(updateLoading);
         }
         
-        // initial draw
-        drawBroomToMop(ctx, 0);
-        startLoading();
+        // Initialize everything
+        function init() {
+            // Ensure canvas is clean and draw initial broom
+            ctx.clearRect(0, 0, 300, 300);
+            drawBroomToMop(ctx, 0);
+            
+            // Reset loading state
+            loadingComplete = false;
+            startTimestamp = null;
+            
+            // Start animation
+            if(animationFrameId) cancelAnimationFrame(animationFrameId);
+            animationFrameId = requestAnimationFrame(updateLoading);
+        }
         
-        // handle canvas resize on load
-        window.addEventListener('load', () => {
-            resizeCanvas();
+        // Start the loading animation when page is fully loaded
+        if(document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+        
+        // Handle any window resize gracefully (just keep canvas crisp)
+        window.addEventListener('resize', function() {
+            // No action needed, canvas dimensions are fixed at 300x300
+            // But re-draw current state if not complete
+            if(!loadingComplete && animationFrameId) {
+                // Force redraw will happen on next frame, but just in case:
+                const currentFill = document.getElementById('progressFill');
+                if(currentFill) {
+                    let width = currentFill.style.width;
+                    let percent = parseFloat(width) || 0;
+                    drawByProgress(percent / 100);
+                }
+            }
         });
+        
     })();
 </script>
 </body>
