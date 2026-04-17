@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Elegant Cleanse | Professional Loading Screen</title>
+    <title>Vertigo Collage | Premium Loading Experience</title>
     <style>
         * {
             margin: 0;
@@ -16,586 +16,583 @@
             width: 100vw;
             height: 100vh;
             overflow: hidden;
-            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, 'Poppins', 'Helvetica Neue', sans-serif;
-            background: #f3efe5;
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, 'Poppins', sans-serif;
+            background: #f5f3ea;  /* soft cream base */
         }
 
-        /* MAIN LOADING SCREEN CONTAINER */
-        .loading-screen {
+        /* LOADING OVERLAY - soft light green / olive cream palette */
+        .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #eef0e0 0%, #dbe3ce 100%);
+            background: radial-gradient(circle at 30% 20%, #eef2e0, #dce5ce);
+            z-index: 2000;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
-            transition: opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: opacity 1.2s cubic-bezier(0.2, 0.9, 0.4, 1.1), visibility 0s linear 1.2s;
+            backdrop-filter: blur(0px);
         }
 
-        /* subtle texture overlay */
-        .loading-screen::before {
+        /* subtle organic texture */
+        .loading-overlay::before {
             content: "";
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: radial-gradient(#cbd8b0 0.8px, transparent 0.8px);
-            background-size: 28px 28px;
+            background-image: radial-gradient(#c3d0a5 0.7px, transparent 0.7px);
+            background-size: 32px 32px;
             opacity: 0.2;
             pointer-events: none;
         }
 
-        /* CARD ANIMATION ZONE */
-        .animation-stage {
-            background: rgba(250, 248, 240, 0.65);
-            backdrop-filter: blur(2px);
-            border-radius: 64px;
-            padding: 2rem 3rem;
-            box-shadow: 0 20px 35px -12px rgba(60, 45, 30, 0.12), 0 1px 3px rgba(0,0,0,0.02);
-            border: 1px solid rgba(215, 205, 175, 0.5);
-            margin-bottom: 2.5rem;
+        /* MAIN COLLAGE CONTAINER */
+        .collage-stage {
+            position: relative;
+            width: 380px;
+            height: 380px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 20px 30px rgba(60, 50, 30, 0.15));
         }
 
-        .morph-canvas {
+        /* rotating image wrapper */
+        .rotating-stack {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.23, 0.98, 0.32, 1);
+        }
+
+        .collage-card {
+            position: absolute;
             width: 280px;
             height: 280px;
-            display: block;
-            margin: 0 auto;
-            filter: drop-shadow(0 8px 12px rgba(70, 60, 40, 0.1));
+            top: 50%;
+            left: 50%;
+            margin-left: -140px;
+            margin-top: -140px;
+            background: rgba(250, 248, 238, 0.75);
+            backdrop-filter: blur(3px);
+            border-radius: 28px;
+            box-shadow: 0 25px 40px -12px rgba(40, 35, 20, 0.25), 0 0 0 1px rgba(220, 210, 180, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: scale(0.92) translateY(15px);
+            pointer-events: none;
         }
 
-        .loading-caption {
-            margin-top: 2rem;
-            font-weight: 450;
+        .collage-card.active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+            box-shadow: 0 30px 45px -12px rgba(50, 45, 25, 0.3);
+        }
+
+        .collage-card img {
+            max-width: 85%;
+            max-height: 85%;
+            object-fit: contain;
+            border-radius: 20px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.05));
+            transition: all 0.3s;
+        }
+
+        /* logo special style (final stage) */
+        .collage-card.logo-card {
+            background: linear-gradient(135deg, #fefcf3, #f6f2e4);
+            border: 1px solid #e2d8bd;
+        }
+
+        .collage-card.logo-card img {
+            max-width: 78%;
+            filter: drop-shadow(0 8px 12px rgba(100, 85, 50, 0.15));
+        }
+
+        /* elegant progress text & counter */
+        .progress-meta {
+            position: absolute;
+            bottom: -70px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-weight: 460;
             letter-spacing: 0.3px;
-            font-size: 1rem;
-            color: #5c6048;
-            background: rgba(245, 242, 232, 0.7);
-            backdrop-filter: blur(4px);
-            padding: 0.5rem 1.5rem;
+            background: rgba(245, 242, 230, 0.7);
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1.2rem;
             border-radius: 60px;
-            border: 0.5px solid #dad1ba;
+            width: fit-content;
+            margin: 0 auto;
+            border: 0.5px solid #d9d0b5;
+            color: #6b7452;
+            font-size: 0.9rem;
         }
 
-        .loading-caption span {
-            font-weight: 500;
-            color: #5f6b3c;
+        .progress-meta span {
+            font-weight: 600;
+            color: #7c8a5c;
+            margin: 0 2px;
         }
 
-        .progress-container {
-            width: 240px;
-            margin-top: 1.8rem;
-            background: #e2decb;
-            border-radius: 100px;
-            height: 4px;
-            overflow: hidden;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
-        }
-
-        .progress-fill {
-            width: 0%;
-            height: 100%;
-            background: #83945e;
-            border-radius: 100px;
-            transition: width 0.1s linear;
-        }
-
-        .percent-text {
-            margin-top: 0.6rem;
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: #7c8262;
-            letter-spacing: 0.5px;
-        }
-
-        .brand-note {
+        .brand-watermark {
             position: absolute;
             bottom: 28px;
             left: 0;
             right: 0;
             text-align: center;
             font-size: 0.7rem;
-            color: #b0aa8b;
+            color: #b9b696;
+            letter-spacing: 1.5px;
             font-weight: 400;
-            letter-spacing: 1px;
         }
 
-        .main-content {
+        /* EXPANDING TRANSITION — after logo appears, we expand and reveal page */
+        .expand-transition {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 280px;
+            height: 280px;
+            background: #e7e9d8;
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            z-index: 2001;
             opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.6s ease 0.1s;
+            pointer-events: none;
+            transition: all 0.85s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+            box-shadow: 0 0 0 0 rgba(180, 190, 140, 0);
+        }
+
+        /* hidden main content (your actual page would be here) */
+        .main-site {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+            background: #fffef7;
+            z-index: 10;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #f9f7f0;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s ease 0.2s;
+            overflow: auto;
         }
 
-        .demo-card {
-            background: white;
-            max-width: 500px;
-            padding: 2.8rem;
-            border-radius: 40px;
+        .demo-welcome {
             text-align: center;
-            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05);
-            border: 1px solid #e9e2cf;
+            max-width: 550px;
+            padding: 2.5rem;
+            background: rgba(255, 253, 245, 0.9);
+            border-radius: 48px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.05);
+            border: 1px solid #ece3cf;
         }
 
-        .demo-card h2 {
+        .demo-welcome h1 {
             font-weight: 500;
-            color: #6e7b4a;
-            margin-bottom: 0.75rem;
+            color: #6b7752;
+            margin-bottom: 1rem;
+            font-size: 2.2rem;
         }
 
-        .demo-card p {
-            color: #8e927a;
-            line-height: 1.5;
+        .demo-welcome p {
+            color: #939b77;
+            line-height: 1.6;
         }
 
+        /* responsive adjustments */
         @media (max-width: 550px) {
-            .animation-stage {
-                padding: 1rem 2rem;
+            .collage-stage {
+                width: 300px;
+                height: 300px;
             }
-            .morph-canvas {
-                width: 220px;
-                height: 220px;
+            .collage-card {
+                width: 230px;
+                height: 230px;
+                margin-left: -115px;
+                margin-top: -115px;
+            }
+            .progress-meta {
+                bottom: -55px;
+                font-size: 0.8rem;
             }
         }
     </style>
 </head>
 <body>
 
-<div class="loading-screen" id="loadingScreen">
-    <div class="animation-stage">
-        <canvas id="toolCanvas" class="morph-canvas" width="300" height="300" style="width:280px; height:280px"></canvas>
+<!-- LOADING COLLAGE OVERLAY -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="collage-stage">
+        <div class="rotating-stack" id="rotatingStack">
+            <!-- dynamic cards will be injected via JS, but we build static base -->
+        </div>
+        <div class="progress-meta" id="progressMeta">
+            <span id="currentStep">0</span> / <span id="totalSteps">10</span> · visual journey
+        </div>
     </div>
-    <div class="loading-caption">
-        ✨ <span>preparing essentials</span> ✨
-    </div>
-    <div class="progress-container">
-        <div class="progress-fill" id="progressFill"></div>
-    </div>
-    <div class="percent-text" id="percentLabel">0%</div>
-    <div class="brand-note">clean flow · professional morphing sequence</div>
+    <div class="brand-watermark">✦ REFINED COLLAGE ✦</div>
 </div>
 
-<div class="main-content" id="mainContent">
-    <div class="demo-card">
-        <h2>✨ spotless journey ✨</h2>
-        <p>Your cleaning tools are ready.<br>Broom · Mop · Vacuum · Duster · Squeegee — seamless transition.<br><br> <span style="font-size:0.85rem; color:#b7b78a;">professional loading complete</span></p>
+<!-- expansion effect node -->
+<div class="expand-transition" id="expandEffect"></div>
+
+<!-- YOUR MAIN PAGE (simulated, you will replace with actual file content) -->
+<div class="main-site" id="mainSite">
+    <div class="demo-welcome">
+        <h1>✨ welcome home ✨</h1>
+        <p>Your actual website content goes here.<br> 
+        The loading animation completed with elegance.<br>
+        <span style="font-size:0.85rem; color:#b6bf8a;">soft green & cream — premium finish</span></p>
     </div>
 </div>
 
 <script>
-    (function(){
-        // Get elements
-        const canvas = document.getElementById('toolCanvas');
-        const ctx = canvas.getContext('2d');
+    (function() {
+        // ------------------------------------------------------------------
+        // PROFESSIONAL VERTICAL ROTATING COLLAGE
+        // images: reference/img1.png to img10.png (1..10)
+        // last image (index 10) is our LOGO, then expand to main page
+        // vertical rotation effect: each image appears in a 3D stack-like flip
+        // but we want a clean "rotating vertically" meaning a carousel that rotates
+        // vertically (top to bottom feel) — we'll achieve a morphing vertical flip effect
+        // using CSS transitions combined with active index change.
+        // For smoothness, we'll cycle through images 1 to 10, each shown for 400ms,
+        // then pause at 10 (logo) and then trigger expansion.
+        // ------------------------------------------------------------------
         
-        // FIX: Ensure canvas dimensions are set properly
-        canvas.width = 300;
-        canvas.height = 300;
+        const TOTAL_IMAGES = 10;      // img1.png ... img10.png (logo)
+        const DURATION_PER_IMAGE = 380; // ms per image (smooth but not too fast)
+        const HOLD_LOGO_EXTRA = 600;    // extra hold on logo before expansion
         
-        // Loading state
-        let loadingComplete = false;
-        let animationFrameId = null;
-        let startTimestamp = null;
-        const loadingDuration = 5200; // 5.2 seconds
+        let currentIndex = 1;           // start at image 1
+        let intervalId = null;
+        let isExpanding = false;
+        let expansionTriggered = false;
         
-        // ---------- PROFESSIONAL MORPHING DRAWING FUNCTIONS ----------
-        // Each function receives a 't' value from 0 to 1 and draws the interpolated shape
-        // between two consecutive cleaning tools.
+        // Get DOM elements
+        const overlay = document.getElementById('loadingOverlay');
+        const stackContainer = document.getElementById('rotatingStack');
+        const currentStepSpan = document.getElementById('currentStep');
+        const totalStepsSpan = document.getElementById('totalSteps');
+        const expandEffectDiv = document.getElementById('expandEffect');
+        const mainSiteDiv = document.getElementById('mainSite');
         
-        // 1. BROOM (t=0) -> MOP (t=1)
-        function drawBroomToMop(ctx, t) {
-            ctx.clearRect(0, 0, 300, 300);
-            ctx.save();
-            ctx.translate(150, 150);
+        if(totalStepsSpan) totalStepsSpan.innerText = TOTAL_IMAGES;
+        
+        // preload all images for flawless performance
+        const preloadedImages = [];
+        function preloadImage(src, idx) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = () => {
+                    // fallback: create a colored canvas with number if image missing
+                    console.warn(`Could not load ${src}, using fallback`);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 300;
+                    canvas.height = 300;
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#ece6d8';
+                    ctx.fillRect(0,0,300,300);
+                    ctx.fillStyle = '#8c9a6e';
+                    ctx.font = 'bold 32px "Segoe UI"';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(`${idx}`, 150, 150);
+                    const fallbackImg = new Image();
+                    fallbackImg.src = canvas.toDataURL();
+                    resolve(fallbackImg);
+                };
+                img.src = src;
+            });
+        }
+        
+        // create card elements dynamically (10 cards)
+        async function buildCollageCards() {
+            const promises = [];
+            for(let i = 1; i <= TOTAL_IMAGES; i++) {
+                const imgPath = `reference/img${i}.png`;  // exactly as requested
+                promises.push(preloadImage(imgPath, i));
+            }
+            const loadedImages = await Promise.all(promises);
             
-            // Handle (shared element)
-            const handleAngle = -0.28 * Math.PI + (t * 0.08);
-            const handleLength = 98 - (t * 10);
-            const startX = -12;
-            const startY = 58 - (t * 6);
-            const endX = startX + Math.sin(handleAngle) * handleLength;
-            const endY = startY + Math.cos(handleAngle) * handleLength;
-            
-            // Draw wooden handle
-            ctx.beginPath();
-            ctx.moveTo(startX - 6, startY);
-            ctx.lineTo(endX - 5, endY);
-            ctx.lineTo(endX + 5, endY);
-            ctx.lineTo(startX + 6, startY);
-            ctx.fillStyle = `rgba(110, 90, 60, 0.95)`;
-            ctx.fill();
-            
-            // BROOM part (fades out)
-            if (t < 0.85) {
-                const broomIntensity = Math.max(0, 1 - t / 0.85);
-                ctx.beginPath();
-                ctx.moveTo(endX - 14, endY);
-                ctx.quadraticCurveTo(endX + (1-t)*8, endY + 22 * broomIntensity, endX + 12 * broomIntensity, endY + 28 * broomIntensity);
-                ctx.lineTo(endX - 12 * broomIntensity, endY + 28 * broomIntensity);
-                ctx.quadraticCurveTo(endX - (1-t)*8, endY + 22 * broomIntensity, endX + 14, endY);
-                ctx.fillStyle = `rgba(145, 115, 70, ${0.9 * broomIntensity})`;
-                ctx.fill();
-                
-                // Bristle details
-                for(let i = 0; i < 10; i++) {
-                    ctx.beginPath();
-                    const offset = -12 + i * 2.8;
-                    ctx.moveTo(endX + offset, endY);
-                    ctx.lineTo(endX + offset + (1-t)*6, endY + 20 * broomIntensity);
-                    ctx.strokeStyle = `rgba(100, 75, 45, ${0.7 * broomIntensity})`;
-                    ctx.lineWidth = 1.3;
-                    ctx.stroke();
+            // clear container
+            stackContainer.innerHTML = '';
+            // create cards for each image
+            for(let i = 0; i < TOTAL_IMAGES; i++) {
+                const card = document.createElement('div');
+                const isLogo = (i+1 === TOTAL_IMAGES);
+                card.className = `collage-card ${isLogo ? 'logo-card' : ''}`;
+                card.setAttribute('data-index', i+1);
+                const imgElement = document.createElement('img');
+                imgElement.src = loadedImages[i].src;
+                imgElement.alt = `tool ${i+1}`;
+                // optional: for logo we add subtle extra style
+                if(isLogo) {
+                    imgElement.style.transition = "transform 0.3s";
+                }
+                card.appendChild(imgElement);
+                stackContainer.appendChild(card);
+            }
+            // initially show first card
+            updateActiveCard(1);
+        }
+        
+        // update active card based on index (1..10)
+        function updateActiveCard(index) {
+            const cards = document.querySelectorAll('.collage-card');
+            cards.forEach((card, idx) => {
+                const cardNum = idx + 1;
+                if(cardNum === index) {
+                    card.classList.add('active');
+                    // add subtle vertical rotation animation? we simulate vertical flip by transformY keyframes
+                    // we apply a micro entrance effect per card
+                    card.style.animation = 'none';
+                    card.offsetHeight; // reflow
+                    card.style.animation = 'verticalPop 0.38s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards';
+                } else {
+                    card.classList.remove('active');
+                    card.style.animation = '';
+                }
+            });
+            // update counter display
+            if(currentStepSpan) currentStepSpan.innerText = index;
+        }
+        
+        // add keyframe animation for vertical "rotate" feel
+        const styleSheet = document.createElement("style");
+        styleSheet.textContent = `
+            @keyframes verticalPop {
+                0% {
+                    opacity: 0;
+                    transform: rotateX(25deg) translateY(18px) scale(0.92);
+                    filter: blur(2px);
+                }
+                40% {
+                    opacity: 0.8;
+                    transform: rotateX(-4deg) translateY(-2px) scale(1.01);
+                }
+                100% {
+                    opacity: 1;
+                    transform: rotateX(0deg) translateY(0) scale(1);
+                    filter: blur(0);
                 }
             }
-            
-            // MOP part (appears)
-            if (t > 0.15) {
-                const mopIntensity = Math.min(1, Math.max(0, (t - 0.15) / 0.85));
-                const mopX = endX + 2;
-                const mopY = endY + 8 * mopIntensity;
-                
-                // Mop head base
-                ctx.beginPath();
-                ctx.ellipse(mopX, mopY + 10 * mopIntensity, 14, 18 * mopIntensity, 0, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(165, 140, 100, ${0.85 * mopIntensity})`;
-                ctx.fill();
-                
-                // Mop strings/fringes
-                for(let s = 0; s < 14; s++) {
-                    ctx.beginPath();
-                    const angleOff = -0.7 + s * 0.12;
-                    ctx.moveTo(mopX + Math.sin(angleOff) * 9, mopY + 3);
-                    ctx.lineTo(mopX + Math.sin(angleOff) * 14, mopY + 28 * mopIntensity);
-                    ctx.strokeStyle = `rgba(120, 95, 65, ${0.65 * mopIntensity})`;
-                    ctx.lineWidth = 1.4;
-                    ctx.stroke();
-                }
+            .collage-card {
+                transition: box-shadow 0.3s, transform 0.2s;
             }
-            ctx.restore();
-        }
+            .collage-card.active:hover {
+                transform: scale(1.02);
+            }
+        `;
+        document.head.appendChild(styleSheet);
         
-        // 2. MOP (t=0) -> VACUUM (t=1)
-        function drawMopToVacuum(ctx, t) {
-            ctx.clearRect(0, 0, 300, 300);
-            ctx.save();
-            ctx.translate(150, 150);
+        // rotate to next image (vertical cycle)
+        function nextImage() {
+            if (isExpanding || expansionTriggered) return;
             
-            const handleAngle = -0.25 * Math.PI + (t * 0.12);
-            const handleLength = 88 - (t * 14);
-            const startX = -10;
-            const startY = 55 - (t * 8);
-            const endX = startX + Math.sin(handleAngle) * handleLength;
-            const endY = startY + Math.cos(handleAngle) * handleLength;
-            
-            // Handle
-            ctx.beginPath();
-            ctx.rect(startX - 5, startY - 3, 10, handleLength);
-            ctx.fillStyle = `rgba(105, 88, 62, 0.92)`;
-            ctx.fill();
-            
-            // Mop head fading
-            if(t < 0.8) {
-                const mopAlpha = 1 - t / 0.8;
-                ctx.beginPath();
-                ctx.ellipse(endX - 2, endY + 14, 15, 20 * mopAlpha, 0, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(155, 130, 90, ${0.8 * mopAlpha})`;
-                ctx.fill();
-            }
-            
-            // Vacuum cleaner appearing
-            if(t > 0.2) {
-                const vacIntensity = Math.min(1, Math.max(0, (t - 0.2) / 0.8));
-                const bodyX = endX + 10 * vacIntensity;
-                const bodyY = endY - 8 * vacIntensity;
+            if (currentIndex < TOTAL_IMAGES) {
+                currentIndex++;
+                updateActiveCard(currentIndex);
                 
-                // Main vacuum body
-                ctx.beginPath();
-                ctx.ellipse(bodyX + 6, bodyY + 14, 20 * vacIntensity, 16 * vacIntensity, 0, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(75, 88, 62, ${0.9 * vacIntensity})`;
-                ctx.fill();
-                
-                // Vacuum canister detail
-                ctx.beginPath();
-                ctx.ellipse(bodyX + 4, bodyY + 28, 12 * vacIntensity, 10 * vacIntensity, 0, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(60, 70, 50, ${0.85 * vacIntensity})`;
-                ctx.fill();
-                
-                // Hose/nozzle
-                ctx.beginPath();
-                ctx.moveTo(bodyX + 12, bodyY + 18);
-                ctx.lineTo(bodyX + 32 * vacIntensity, bodyY + 26 * vacIntensity);
-                ctx.lineWidth = 6 * vacIntensity;
-                ctx.strokeStyle = `rgba(50, 60, 42, ${0.8 * vacIntensity})`;
-                ctx.stroke();
-                
-                // Wheel detail
-                ctx.beginPath();
-                ctx.arc(bodyX - 4, bodyY + 34, 7 * vacIntensity, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(45, 55, 38, ${0.7 * vacIntensity})`;
-                ctx.fill();
-            }
-            ctx.restore();
-        }
-        
-        // 3. VACUUM (t=0) -> DUSTER (t=1)
-        function drawVacuumToDuster(ctx, t) {
-            ctx.clearRect(0, 0, 300, 300);
-            ctx.save();
-            ctx.translate(150, 150);
-            
-            const vacAlpha = 1 - Math.min(1, t * 1.2);
-            // Vacuum fading
-            if(vacAlpha > 0.05) {
-                ctx.beginPath();
-                ctx.ellipse(-10, 20, 22 * vacAlpha, 18 * vacAlpha, 0, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(78, 90, 60, ${0.85 * vacAlpha})`;
-                ctx.fill();
-                ctx.beginPath();
-                ctx.ellipse(-6, 38, 13 * vacAlpha, 11 * vacAlpha, 0, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(62, 72, 48, ${0.8 * vacAlpha})`;
-                ctx.fill();
-                ctx.beginPath();
-                ctx.moveTo(6, 12);
-                ctx.lineTo(22 * vacAlpha, 28 * vacAlpha);
-                ctx.lineWidth = 5 * vacAlpha;
-                ctx.strokeStyle = `rgba(55, 65, 45, ${0.75 * vacAlpha})`;
-                ctx.stroke();
-            }
-            
-            // Duster emerging
-            const dustIntensity = Math.min(1, Math.max(0, (t - 0.2) / 0.8));
-            if(dustIntensity > 0) {
-                const handleX = -8;
-                const handleY = 28 - dustIntensity * 4;
-                
-                // Handle
-                ctx.beginPath();
-                ctx.rect(handleX - 4, handleY - 18, 8, 50);
-                ctx.fillStyle = `rgba(135, 108, 78, 0.92)`;
-                ctx.fill();
-                
-                // Fluffy duster head
-                ctx.beginPath();
-                ctx.ellipse(handleX + 2, handleY - 24, 18 * dustIntensity, 22 * dustIntensity, 0.2, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(215, 190, 150, ${0.95 * dustIntensity})`;
-                ctx.fill();
-                
-                // Feather details
-                for(let f = 0; f < 14; f++) {
-                    ctx.beginPath();
-                    const angleOffset = f * 0.52;
-                    const radX = 14 * dustIntensity;
-                    const radY = 16 * dustIntensity;
-                    ctx.ellipse(handleX + 2 + Math.sin(angleOffset) * radX * 0.6, 
-                               handleY - 26 + Math.cos(angleOffset * 1.2) * radY * 0.7, 
-                               3.5, 9, angleOffset, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(225, 200, 155, ${0.7 * dustIntensity})`;
-                    ctx.fill();
-                }
-            }
-            ctx.restore();
-        }
-        
-        // 4. DUSTER (t=0) -> SQUEEGEE (t=1)
-        function drawDusterToSqueegee(ctx, t) {
-            ctx.clearRect(0, 0, 300, 300);
-            ctx.save();
-            ctx.translate(150, 150);
-            
-            const dustAlpha = 1 - Math.min(1, t * 1.15);
-            if(dustAlpha > 0.05) {
-                // Duster handle
-                ctx.beginPath();
-                ctx.rect(-12, 6, 8, 48);
-                ctx.fillStyle = `rgba(125, 100, 72, ${0.85 * dustAlpha})`;
-                ctx.fill();
-                // Duster head
-                ctx.beginPath();
-                ctx.ellipse(-6, -18, 20 * dustAlpha, 24 * dustAlpha, 0, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(205, 178, 138, ${0.9 * dustAlpha})`;
-                ctx.fill();
-            }
-            
-            // Squeegee appearing
-            const sqIntensity = Math.min(1, Math.max(0, (t - 0.18) / 0.82));
-            if(sqIntensity > 0) {
-                // Squeegee handle (longer)
-                ctx.beginPath();
-                ctx.rect(-10, 12, 9, 62);
-                ctx.fillStyle = `rgba(108, 92, 68, 0.94)`;
-                ctx.fill();
-                
-                // Metal connector
-                ctx.beginPath();
-                ctx.rect(-14, 72, 17, 6);
-                ctx.fillStyle = `rgba(130, 120, 95, ${0.9 * sqIntensity})`;
-                ctx.fill();
-                
-                // Rubber blade (professional squeegee shape)
-                ctx.beginPath();
-                ctx.moveTo(-28, 78);
-                ctx.lineTo(20, 78);
-                ctx.lineTo(23, 88);
-                ctx.lineTo(-31, 88);
-                ctx.fillStyle = `rgba(65, 72, 55, ${0.96 * sqIntensity})`;
-                ctx.fill();
-                
-                // Blade edge detail
-                ctx.beginPath();
-                ctx.rect(-27, 86, 49, 4);
-                ctx.fillStyle = `rgba(50, 58, 42, ${0.9 * sqIntensity})`;
-                ctx.fill();
-                
-                // Shine line on blade
-                ctx.beginPath();
-                ctx.moveTo(-25, 80);
-                ctx.lineTo(18, 80);
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = `rgba(210, 205, 170, ${0.7 * sqIntensity})`;
-                ctx.stroke();
-            }
-            ctx.restore();
-        }
-        
-        // Main drawing dispatcher based on global progress (0 to 1)
-        function drawByProgress(progress) {
-            if(progress >= 0.99) {
-                // Final frame: perfect squeegee
-                drawDusterToSqueegee(ctx, 1.0);
-                return;
-            }
-            
-            // Map progress through 4 morphing segments:
-            // 0.00 - 0.22 : broom -> mop
-            // 0.22 - 0.44 : mop -> vacuum
-            // 0.44 - 0.66 : vacuum -> duster
-            // 0.66 - 0.88 : duster -> squeegee
-            // 0.88 - 1.00 : hold final squeegee (smooth)
-            
-            if(progress <= 0.22) {
-                const t = progress / 0.22;  // 0 to 1
-                drawBroomToMop(ctx, t);
-            } 
-            else if(progress <= 0.44) {
-                const t = (progress - 0.22) / 0.22;
-                drawMopToVacuum(ctx, t);
-            }
-            else if(progress <= 0.66) {
-                const t = (progress - 0.44) / 0.22;
-                drawVacuumToDuster(ctx, t);
-            }
-            else if(progress <= 0.88) {
-                const t = (progress - 0.66) / 0.22;
-                drawDusterToSqueegee(ctx, t);
-            }
-            else {
-                // Final zone: show fully formed squeegee
-                drawDusterToSqueegee(ctx, 1.0);
-            }
-        }
-        
-        // Easing function for smooth professional feel
-        function easeOutCubic(x) {
-            return 1 - Math.pow(1 - x, 3);
-        }
-        
-        // Progress bar update and animation loop
-        function updateLoading(now) {
-            if(loadingComplete) return;
-            
-            if(startTimestamp === null) {
-                startTimestamp = now;
-            }
-            
-            let elapsed = now - startTimestamp;
-            let rawProgress = Math.min(1, elapsed / loadingDuration);
-            let easedProgress = easeOutCubic(rawProgress);
-            
-            // Update UI
-            const percent = Math.floor(easedProgress * 100);
-            const progressFill = document.getElementById('progressFill');
-            const percentLabel = document.getElementById('percentLabel');
-            if(progressFill) progressFill.style.width = `${percent}%`;
-            if(percentLabel) percentLabel.innerText = `${percent}%`;
-            
-            // Draw the current morph state
-            drawByProgress(easedProgress);
-            
-            if(rawProgress >= 1.0) {
-                // Loading complete
-                loadingComplete = true;
-                if(animationFrameId) cancelAnimationFrame(animationFrameId);
-                
-                // Final draw as perfect squeegee
-                drawDusterToSqueegee(ctx, 1.0);
-                
-                // Fade out loading screen, reveal main content
-                const loadingScreen = document.getElementById('loadingScreen');
-                const mainContent = document.getElementById('mainContent');
-                
-                if(loadingScreen) {
-                    loadingScreen.style.opacity = '0';
+                // when we reach the last image (logo), we schedule expansion
+                if (currentIndex === TOTAL_IMAGES) {
+                    // reached logo: clear the auto-rotation interval
+                    if (intervalId) {
+                        clearInterval(intervalId);
+                        intervalId = null;
+                    }
+                    // hold logo for a moment then expand
                     setTimeout(() => {
-                        loadingScreen.style.display = 'none';
-                        if(mainContent) {
-                            mainContent.style.visibility = 'visible';
-                            mainContent.style.opacity = '1';
+                        if (!expansionTriggered && !isExpanding) {
+                            triggerExpansion();
                         }
-                    }, 800);
+                    }, HOLD_LOGO_EXTRA);
                 }
-                return;
-            }
-            
-            animationFrameId = requestAnimationFrame(updateLoading);
-        }
-        
-        // Initialize everything
-        function init() {
-            // Ensure canvas is clean and draw initial broom
-            ctx.clearRect(0, 0, 300, 300);
-            drawBroomToMop(ctx, 0);
-            
-            // Reset loading state
-            loadingComplete = false;
-            startTimestamp = null;
-            
-            // Start animation
-            if(animationFrameId) cancelAnimationFrame(animationFrameId);
-            animationFrameId = requestAnimationFrame(updateLoading);
-        }
-        
-        // Start the loading animation when page is fully loaded
-        if(document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
-        } else {
-            init();
-        }
-        
-        // Handle any window resize gracefully (just keep canvas crisp)
-        window.addEventListener('resize', function() {
-            // No action needed, canvas dimensions are fixed at 300x300
-            // But re-draw current state if not complete
-            if(!loadingComplete && animationFrameId) {
-                // Force redraw will happen on next frame, but just in case:
-                const currentFill = document.getElementById('progressFill');
-                if(currentFill) {
-                    let width = currentFill.style.width;
-                    let percent = parseFloat(width) || 0;
-                    drawByProgress(percent / 100);
+            } else {
+                // safety: if somehow already at logo, trigger expansion
+                if (!expansionTriggered && currentIndex === TOTAL_IMAGES) {
+                    setTimeout(() => {
+                        if (!expansionTriggered) triggerExpansion();
+                    }, 200);
                 }
             }
+        }
+        
+        // start the rotating sequence
+        function startRotation() {
+            if (intervalId) clearInterval(intervalId);
+            currentIndex = 1;
+            updateActiveCard(1);
+            intervalId = setInterval(() => {
+                nextImage();
+            }, DURATION_PER_IMAGE);
+        }
+        
+        // PROFESSIONAL EXPANSION: after logo is displayed, the collage morphs & expands
+        // creating a beautiful opening effect, then reveals the main page.
+        function triggerExpansion() {
+            if (expansionTriggered || isExpanding) return;
+            expansionTriggered = true;
+            isExpanding = true;
+            
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = null;
+            }
+            
+            // get the current active card (logo card)
+            const activeCard = document.querySelector('.collage-card.active');
+            const collageStage = document.querySelector('.collage-stage');
+            const overlayElem = document.getElementById('loadingOverlay');
+            const progressMetaDiv = document.querySelector('.progress-meta');
+            const watermarkDiv = document.querySelector('.brand-watermark');
+            
+            // make sure logo card looks prominent
+            if (activeCard) {
+                activeCard.style.transition = 'all 0.5s cubic-bezier(0.2, 0.95, 0.3, 1.1)';
+                activeCard.style.boxShadow = '0 35px 55px -12px rgba(60, 55, 30, 0.4)';
+            }
+            
+            // prepare expansion effect: we will animate the expand-transition div from the logo position
+            // get bounding rect of the active card relative to viewport
+            if (activeCard) {
+                const rect = activeCard.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                expandEffectDiv.style.left = `${centerX}px`;
+                expandEffectDiv.style.top = `${centerY}px`;
+                expandEffectDiv.style.width = `${rect.width}px`;
+                expandEffectDiv.style.height = `${rect.height}px`;
+                expandEffectDiv.style.transform = 'translate(-50%, -50%) scale(1)';
+                expandEffectDiv.style.opacity = '1';
+                expandEffectDiv.style.background = '#e2e6d3';
+                expandEffectDiv.style.boxShadow = '0 0 0 0px rgba(150, 160, 110, 0.3)';
+                
+                // force reflow
+                expandEffectDiv.offsetHeight;
+                // animate expansion: grow to full screen
+                expandEffectDiv.style.transition = 'all 0.85s cubic-bezier(0.2, 0.9, 0.3, 1.2)';
+                expandEffectDiv.style.width = '200vw';
+                expandEffectDiv.style.height = '200vh';
+                expandEffectDiv.style.left = '50%';
+                expandEffectDiv.style.top = '50%';
+                expandEffectDiv.style.transform = 'translate(-50%, -50%) scale(1)';
+                expandEffectDiv.style.backgroundColor = '#eef1e0';
+                expandEffectDiv.style.opacity = '0.95';
+                expandEffectDiv.style.borderRadius = '0%';
+            }
+            
+            // fade out the progress meta and watermark for elegance
+            if (progressMetaDiv) progressMetaDiv.style.transition = 'opacity 0.4s';
+            if (progressMetaDiv) progressMetaDiv.style.opacity = '0';
+            if (watermarkDiv) watermarkDiv.style.transition = 'opacity 0.4s';
+            if (watermarkDiv) watermarkDiv.style.opacity = '0';
+            
+            // fade out loading overlay background slightly after expansion start
+            if (overlayElem) {
+                overlayElem.style.transition = 'opacity 0.7s ease';
+                overlayElem.style.opacity = '0';
+            }
+            
+            // after expansion animation ends, reveal main site and fully remove loading overlay
+            setTimeout(() => {
+                // reveal main site content
+                if (mainSiteDiv) {
+                    mainSiteDiv.style.visibility = 'visible';
+                    mainSiteDiv.style.opacity = '1';
+                }
+                // completely hide loading overlay and expansion effect
+                if (overlayElem) {
+                    overlayElem.style.display = 'none';
+                }
+                expandEffectDiv.style.opacity = '0';
+                expandEffectDiv.style.visibility = 'hidden';
+                
+                // optional: trigger callback if needed
+                isExpanding = false;
+            }, 850);
+        }
+        
+        // fallback mechanism: if any image fails to load we still show sequence
+        // Also we ensure that the rotating collage begins after cards built.
+        async function initAnimation() {
+            await buildCollageCards();
+            startRotation();
+            
+            // also handle edge case: if for some reason images take too long, we force start after max 1s
+            setTimeout(() => {
+                if (!intervalId && !expansionTriggered) {
+                    console.log("forcing rotation start");
+                    startRotation();
+                }
+            }, 1200);
+        }
+        
+        // ensure that we don't have blank screen: immediately show first card
+        initAnimation().catch(err => {
+            console.warn("error building cards, using fallback", err);
+            // fallback: create placeholder cards
+            const fallbackGenerate = async () => {
+                stackContainer.innerHTML = '';
+                for(let i=1; i<=TOTAL_IMAGES; i++) {
+                    const card = document.createElement('div');
+                    card.className = `collage-card ${i===TOTAL_IMAGES ? 'logo-card' : ''}`;
+                    const img = document.createElement('img');
+                    // use inline placeholder data
+                    img.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23e8e2cf'/%3E%3Ctext x='50' y='55' font-size='28' text-anchor='middle' fill='%23829464'%3E${i}%3C/text%3E%3C/svg%3E`;
+                    img.alt = `img${i}`;
+                    card.appendChild(img);
+                    stackContainer.appendChild(card);
+                }
+                updateActiveCard(1);
+                startRotation();
+            };
+            fallbackGenerate();
         });
         
+        // Additional polish: if user clicks on logo? no interaction needed, fully automatic
+        // But we also allow that if somehow expansion didn't trigger (just in case), we trigger after 6s max
+        setTimeout(() => {
+            if (!expansionTriggered && currentIndex === TOTAL_IMAGES) {
+                triggerExpansion();
+            } else if (!expansionTriggered && currentIndex < TOTAL_IMAGES) {
+                // force after 7.5 seconds just in case rotation gets stuck (robustness)
+                setTimeout(() => {
+                    if (!expansionTriggered) {
+                        if (currentIndex < TOTAL_IMAGES) {
+                            // jump to logo
+                            currentIndex = TOTAL_IMAGES;
+                            updateActiveCard(TOTAL_IMAGES);
+                            if (intervalId) clearInterval(intervalId);
+                            setTimeout(() => triggerExpansion(), 500);
+                        } else {
+                            triggerExpansion();
+                        }
+                    }
+                }, 2500);
+            }
+        }, 7000);
+        
+        // final cleanup: ensure no memory leaks
+        window.addEventListener('beforeunload', () => {
+            if(intervalId) clearInterval(intervalId);
+        });
     })();
 </script>
 </body>
