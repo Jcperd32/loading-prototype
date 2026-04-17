@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preloader Prototype - Window, Leaf & Sparkle</title>
+    <title>Preloader - Window Cleaning (Stains to Clean)</title>
     <style>
         * {
             margin: 0;
@@ -11,7 +11,7 @@
             box-sizing: border-box;
         }
 
-        /* Colors inspired by your eco cleaning brand */
+        /* Colors matching your eco brand */
         :root {
             --olive-dark: #5a6f4a;
             --olive-medium: #7a9063;
@@ -45,156 +45,152 @@
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
+            transition: opacity 0.7s ease-in-out, visibility 0.7s ease-in-out;
         }
 
-        /* Hide preloader after animation */
         .preloader.hide {
             opacity: 0;
             visibility: hidden;
         }
 
-        /* Animation container */
-        .animation-scene {
+        /* Clean centered container for the window */
+        .animation-container {
             text-align: center;
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(4px);
-            padding: 2rem 3rem;
-            border-radius: 60px;
+            padding: 2rem 2.5rem;
+            border-radius: 48px;
             box-shadow: 0 20px 40px rgba(90, 111, 74, 0.2);
             border: 1px solid rgba(122, 144, 99, 0.3);
         }
 
-        /* Canvas wrapper for drawings */
-        .canvas-area {
-            position: relative;
-            width: 300px;
-            height: 300px;
-            margin: 0 auto 30px;
+        /* Window wrapper - perfectly centered relative to container */
+        .window-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
         }
 
-        /* ===== WINDOW (cleaning animation) ===== */
+        /* The window frame */
         .window-frame {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 260px;
-            height: 260px;
-            background: #d9d2c5;
-            border-radius: 20px;
-            border: 8px solid #b59f7e;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            position: relative;
+            width: 320px;
+            height: 320px;
+            background: #c9c1b2;
+            border-radius: 24px;
+            border: 10px solid #b59f7e;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
             overflow: hidden;
             cursor: pointer;
         }
 
-        /* Glass pane with dirt/steam effect that gets cleaned */
+        /* Glass pane background (slightly tinted) */
         .window-glass {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 30% 40%, rgba(200,210,180,0.4), rgba(150,160,120,0.2));
-            backdrop-filter: blur(1px);
-            z-index: 2;
+            background: linear-gradient(145deg, rgba(210, 200, 175, 0.5), rgba(180, 170, 145, 0.3));
+            z-index: 1;
         }
 
-        /* The "cleaning rag" effect – a wiper that moves */
-        .wiper {
+        /* STAINS (smoke-like / dark marks) that will be cleaned */
+        .stains-layer {
             position: absolute;
             top: 0;
-            left: -20%;
-            width: 140%;
-            height: 30px;
-            background: linear-gradient(90deg, #7a9063, #a8ba94);
-            border-radius: 30px;
-            opacity: 0.7;
-            filter: blur(2px);
-            z-index: 3;
-            animation: wipeWindow 1.8s ease-in-out infinite;
-            box-shadow: 0 0 8px rgba(90,111,74,0.5);
-        }
-
-        @keyframes wipeWindow {
-            0% { top: 0%; left: -20%; transform: rotate(-5deg); }
-            25% { top: 30%; left: 0%; transform: rotate(2deg); }
-            50% { top: 60%; left: -10%; transform: rotate(-2deg); }
-            75% { top: 85%; left: 5%; transform: rotate(1deg); }
-            100% { top: 100%; left: -20%; transform: rotate(3deg); }
-        }
-
-        /* Sparkle effect inside window */
-        .sparkle-window {
-            position: absolute;
-            top: 20%;
-            left: 20%;
-            width: 60%;
-            height: 60%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
             pointer-events: none;
-            z-index: 4;
         }
 
-        .sparkle {
+        .stain {
             position: absolute;
-            width: 6px;
-            height: 6px;
-            background: #FFD966;
+            background: rgba(60, 55, 50, 0.65);
             border-radius: 50%;
-            opacity: 0;
-            animation: twinkle 1.2s ease-in-out infinite;
-            box-shadow: 0 0 6px gold;
+            filter: blur(6px);
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
 
-        .sparkle:nth-child(1) { top: 20%; left: 30%; animation-delay: 0s; width: 8px; height: 8px; }
-        .sparkle:nth-child(2) { top: 60%; left: 50%; animation-delay: 0.4s; width: 5px; height: 5px; }
-        .sparkle:nth-child(3) { top: 40%; left: 70%; animation-delay: 0.2s; width: 7px; height: 7px; }
-        .sparkle:nth-child(4) { top: 75%; left: 25%; animation-delay: 0.6s; width: 6px; height: 6px; }
-        .sparkle:nth-child(5) { top: 15%; left: 80%; animation-delay: 0.8s; width: 5px; height: 5px; }
+        /* Individual stain positions and sizes */
+        .stain-1 { width: 70px; height: 70px; top: 15%; left: 10%; background: rgba(45, 40, 35, 0.7); filter: blur(8px); }
+        .stain-2 { width: 90px; height: 90px; bottom: 20%; right: 12%; background: rgba(50, 45, 40, 0.65); filter: blur(10px); }
+        .stain-3 { width: 55px; height: 55px; top: 55%; left: 60%; background: rgba(40, 38, 35, 0.7); filter: blur(7px); }
+        .stain-4 { width: 80px; height: 80px; top: 70%; left: 20%; background: rgba(55, 48, 42, 0.6); filter: blur(9px); }
+        .stain-5 { width: 45px; height: 45px; top: 25%; right: 20%; background: rgba(35, 32, 28, 0.75); filter: blur(6px); }
+        .stain-6 { width: 60px; height: 60px; bottom: 10%; left: 40%; background: rgba(48, 43, 38, 0.7); filter: blur(7px); }
+        .stain-7 { width: 50px; height: 50px; top: 40%; left: 75%; background: rgba(52, 46, 40, 0.68); filter: blur(8px); }
 
-        @keyframes twinkle {
-            0% { opacity: 0; transform: scale(0.5); }
-            50% { opacity: 1; transform: scale(1.2); }
-            100% { opacity: 0; transform: scale(0.5); }
-        }
-
-        /* ===== LEAF ANIMATION ===== */
-        .leaf-icon {
+        /* Cleaning wiper / squeegee that moves across the window */
+        .cleaning-tool {
             position: absolute;
-            bottom: 10px;
-            right: 15px;
-            font-size: 3rem;
-            animation: leafFloat 2s ease-in-out infinite;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+            width: 120%;
+            height: 38px;
+            background: linear-gradient(95deg, #6f8a5c, #8aa876);
+            border-radius: 40px;
+            left: -10%;
+            z-index: 4;
+            opacity: 0.85;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+            filter: blur(1.5px);
+            animation: wipeAcross 1.2s ease-in-out forwards;
+            /* will be controlled by JS for precise timing and finishing */
+        }
+
+        /* Keyframes for the wiping motion (smoother, covers whole window) */
+        @keyframes wipeAcross {
+            0% {
+                top: -5%;
+                transform: rotate(-3deg);
+                opacity: 0.9;
+            }
+            20% {
+                top: 18%;
+                transform: rotate(1deg);
+            }
+            40% {
+                top: 40%;
+                transform: rotate(-1deg);
+            }
+            60% {
+                top: 62%;
+                transform: rotate(2deg);
+            }
+            80% {
+                top: 82%;
+                transform: rotate(-1deg);
+            }
+            100% {
+                top: 105%;
+                transform: rotate(0deg);
+                opacity: 0;
+            }
+        }
+
+        /* Cleaning shine effect (subtle glow after cleaning) */
+        .clean-shine {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 40%, rgba(255, 255, 210, 0.4), transparent 70%);
             z-index: 5;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
 
-        @keyframes leafFloat {
-            0% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-12px) rotate(8deg); }
-            100% { transform: translateY(0px) rotate(0deg); }
-        }
-
-        /* Another leaf near title */
-        .floating-leaf {
-            display: inline-block;
-            font-size: 2rem;
-            vertical-align: middle;
-            animation: gentleSway 2.5s infinite ease-in-out;
-        }
-
-        @keyframes gentleSway {
-            0%, 100% { transform: rotate(-5deg); }
-            50% { transform: rotate(5deg); }
-        }
-
-        /* loading text + progress vibe */
+        /* Loading text + subtle status */
         .loading-status {
-            margin-top: 30px;
+            margin-top: 28px;
             font-size: 1.2rem;
             color: var(--olive-dark);
             font-weight: 500;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -220,6 +216,14 @@
         @keyframes pulseDot {
             0%, 60%, 100% { transform: scale(0.6); opacity: 0.4; }
             30% { transform: scale(1.2); opacity: 1; }
+        }
+
+        /* Small cleaning message */
+        .cleaning-message {
+            margin-top: 16px;
+            font-size: 0.9rem;
+            color: var(--brown-accent);
+            font-style: italic;
         }
 
         /* ===== MAIN PAGE CONTENT (hidden until preloader finishes) ===== */
@@ -287,7 +291,6 @@
             transform: scale(1.02);
         }
 
-        /* small footer */
         .footer-note {
             margin-top: 2rem;
             font-size: 0.8rem;
@@ -297,46 +300,46 @@
 </head>
 <body>
 
-<!-- PRELOADER ANIMATION: Window cleaning + leaf + sparkle -->
+<!-- PRELOADER: Window cleaning animation (only window, stains get cleaned, no leaf, no sparkles) -->
 <div class="preloader" id="preloader">
-    <div class="animation-scene">
-        <div class="canvas-area">
-            <!-- WINDOW with cleaning rag and sparkles -->
-            <div class="window-frame">
+    <div class="animation-container">
+        <div class="window-wrapper">
+            <div class="window-frame" id="windowFrame">
+                <!-- Glass background -->
                 <div class="window-glass"></div>
-                <div class="wiper"></div>
-                <div class="sparkle-window">
-                    <div class="sparkle"></div>
-                    <div class="sparkle"></div>
-                    <div class="sparkle"></div>
-                    <div class="sparkle"></div>
-                    <div class="sparkle"></div>
+                
+                <!-- STAINS (dark smoke-like spots) -->
+                <div class="stains-layer" id="stainsLayer">
+                    <div class="stain stain-1"></div>
+                    <div class="stain stain-2"></div>
+                    <div class="stain stain-3"></div>
+                    <div class="stain stain-4"></div>
+                    <div class="stain stain-5"></div>
+                    <div class="stain stain-6"></div>
+                    <div class="stain stain-7"></div>
                 </div>
-                <!-- Leaf near the window sill (extra) -->
-                <div class="leaf-icon">🍃</div>
+
+                <!-- Cleaning tool (wiper/squeegee) -->
+                <div class="cleaning-tool" id="cleaningTool"></div>
+                
+                <!-- Subtle shine after cleaning -->
+                <div class="clean-shine" id="cleanShine"></div>
             </div>
         </div>
 
-        <div style="margin-top: 10px;">
-            <span class="floating-leaf">🌿</span>
-            <span style="font-size: 1.8rem; font-weight: 500; color: #5a6f4a;"> Eco Sparkle </span>
-            <span class="floating-leaf">🍃</span>
-        </div>
-
         <div class="loading-status">
-            <span>Making your home shine</span>
+            <span>🧼 Wiping away dirt...</span>
             <div class="dot-pulse">
                 <span></span><span></span><span></span>
             </div>
         </div>
-
-        <p style="font-size: 0.85rem; margin-top: 20px; color: #8b7355;">✨ wiping, shining, refreshing ✨</p>
+        <div class="cleaning-message" id="statusMsg">✨ Removing stains ✨</div>
     </div>
 </div>
 
-<!-- MAIN WEBSITE CONTENT (will appear after preloader) -->
+<!-- MAIN WEBSITE CONTENT (appears after cleaning animation) -->
 <div class="main-content" id="mainContent">
-    <div class="brand-icon">🏡✨🧼</div>
+    <div class="brand-icon">🏡✨🧽</div>
     <h1>Alice's Eco House Cleaning</h1>
     <p>Your home, naturally radiant. 100% plant-based cleaning with love.</p>
     <div style="display: flex; gap: 12px; justify-content: center; margin: 1rem 0;">
@@ -345,124 +348,247 @@
         <span>✨ crystal shine</span>
     </div>
     <div class="demo-note">
-        🌟 Preloader prototype: window cleaning + leaf + sparkles! 🌟
+        🌟 Preloader: Window getting cleaned — stains disappear! 🌟
     </div>
-    <button id="replayBtn">Replay Animation</button>
+    <button id="replayBtn">▶ Replay Cleaning Animation</button>
     <div class="footer-note">
-        🧽 natural care | Hamptons trusted
+        🧼 natural care | Hamptons trusted
     </div>
 </div>
 
 <script>
-    // PROTOTYPE: Preloader animation with window, leaf & sparkle
-    // After 2.8 seconds (smooth timing) the preloader fades out and main content appears.
-    // Also includes a replay button to see the animation again without refreshing.
-
+    // PRELOADER PROTOTYPE: 
+    // - Only window with smoke-like stains
+    // - Cleaning wiper moves once (duration about 1.2 secs)
+    // - Stains fade out gradually during animation
+    // - After cleaning, shine effect appears, then preloader hides and main content shows.
+    
     const preloader = document.getElementById('preloader');
     const mainContent = document.getElementById('mainContent');
-    let animationTimeout = null;
-
-    // Function to finish loading: hide preloader, show main content with fade-in
-    function finishPreloader() {
-        if (!preloader.classList.contains('hide')) {
+    const cleaningTool = document.getElementById('cleaningTool');
+    const stains = document.querySelectorAll('.stain');
+    const cleanShine = document.getElementById('cleanShine');
+    const statusMsgSpan = document.getElementById('statusMsg');
+    
+    let animationTimer = null;
+    let cleaningFinished = false;
+    
+    // Function to remove stains progressively (match with wiper animation)
+    function startStainCleaning() {
+        // Stains will disappear one by one in sync with the wiper movement (over ~1.2 seconds)
+        // We'll create a timeline: remove stains gradually at intervals
+        const stainArray = Array.from(stains);
+        
+        // Remove first batch quickly (top stains)
+        setTimeout(() => {
+            stainArray.forEach((stain, idx) => {
+                // Gradual removal: all stains fade over 900ms but with slight delay offsets
+                stain.style.transition = 'opacity 0.5s ease, transform 0.3s';
+                stain.style.opacity = '0';
+                stain.style.transform = 'scale(0.8)';
+            });
+            statusMsgSpan.innerHTML = '🧽 Deep cleaning in progress...';
+        }, 150);
+        
+        // Second step: ensure fully invisible after 1 sec
+        setTimeout(() => {
+            stainArray.forEach(stain => {
+                stain.style.display = 'none';
+            });
+            statusMsgSpan.innerHTML = '✨ Stains eliminated! ✨';
+        }, 950);
+    }
+    
+    // Shine effect after cleaning is done (brief glow)
+    function applyCleanShine() {
+        cleanShine.style.opacity = '1';
+        setTimeout(() => {
+            cleanShine.style.opacity = '0';
+        }, 800);
+    }
+    
+    // Function to finish preloader and show main content
+    function finishPreloaderAndShowPage() {
+        if (cleaningFinished) return;
+        cleaningFinished = true;
+        
+        // Ensure all stains are hidden just in case
+        stains.forEach(stain => {
+            stain.style.opacity = '0';
+            stain.style.display = 'none';
+        });
+        
+        // Apply shine one last time for satisfaction
+        applyCleanShine();
+        
+        // Small delay to appreciate the clean window before hiding preloader
+        setTimeout(() => {
             preloader.classList.add('hide');
             mainContent.classList.add('visible');
-        }
-        // Clean up any pending timeout to avoid conflicts
-        if (animationTimeout) clearTimeout(animationTimeout);
-    }
-
-    // Function to reset & replay the preloader animation (for testing prototype)
-    function replayAnimation() {
-        // If currently visible, hide main content, reset preloader
-        if (animationTimeout) clearTimeout(animationTimeout);
+        }, 400);
         
-        // Reset main content visibility
-        mainContent.classList.remove('visible');
-        // Reset preloader: remove hide class, force reflow to restart CSS animations
-        preloader.classList.remove('hide');
-        // Force reflow to restart CSS animations (window wiper, sparkles, leaf etc)
-        void preloader.offsetWidth;
-        
-        // Restart any JS-controlled animation state (none needed, CSS will replay)
-        // But we need to make sure that the wiper animation restarts.
-        // Also re-trigger the timeout to hide after 3 secs again
-        animationTimeout = setTimeout(() => {
-            finishPreloader();
-        }, 3200);  // 3.2 secs gives enough time to see wiper movement, leaf and sparkles
+        if (animationTimer) clearTimeout(animationTimer);
     }
-
-    // Automatic: show preloader for about 3 seconds then reveal page
-    // Simulate loading experience
-    animationTimeout = setTimeout(() => {
-        finishPreloader();
-    }, 3200);   // 3.2 seconds of delightful cleaning animation
-
-    // Additionally, we want to be sure that if any images or heavy load? Not needed.
-    // For robustness, if someone clicks replay button.
+    
+    // Core animation: cleaning tool runs, stains disappear, then page loads
+    function runCleaningSequence() {
+        // Reset any previous states
+        cleaningFinished = false;
+        
+        // Reset stains visibility and opacity
+        stains.forEach(stain => {
+            stain.style.display = 'block';
+            stain.style.opacity = '1';
+            stain.style.transform = 'scale(1)';
+        });
+        
+        // Reset shine
+        cleanShine.style.opacity = '0';
+        
+        // Reset cleaning tool: remove and re-add animation to restart
+        const tool = cleaningTool;
+        tool.style.animation = 'none';
+        tool.style.opacity = '0.85';
+        // Force reflow
+        void tool.offsetWidth;
+        tool.style.animation = 'wipeAcross 1.2s ease-in-out forwards';
+        
+        // Update status message
+        statusMsgSpan.innerHTML = '🧼 Scrubbing away stains...';
+        
+        // Start stain removal sequence (synchronized with wiper movement)
+        startStainCleaning();
+        
+        // After the wiping animation ends (1.2 seconds), finish up and show page
+        const animationEndHandler = () => {
+            tool.removeEventListener('animationend', animationEndHandler);
+            // Ensure stains completely removed
+            stains.forEach(stain => {
+                stain.style.opacity = '0';
+                stain.style.display = 'none';
+            });
+            statusMsgSpan.innerHTML = '✨ Window sparkling clean! ✨';
+            applyCleanShine();
+            
+            // Short pause then transition to main content (total time ~1.5 secs from start)
+            setTimeout(() => {
+                if (!cleaningFinished) {
+                    finishPreloaderAndShowPage();
+                }
+            }, 200);
+        };
+        
+        tool.addEventListener('animationend', animationEndHandler, { once: true });
+        
+        // Fallback: if animationend doesn't fire (rare), force finish after 1.5 sec
+        animationTimer = setTimeout(() => {
+            if (!cleaningFinished) {
+                finishPreloaderAndShowPage();
+            }
+        }, 1600);
+    }
+    
+    // When page loads, start cleaning animation once
+    window.addEventListener('load', () => {
+        // Small delay to ensure everything rendered
+        setTimeout(() => {
+            runCleaningSequence();
+        }, 100);
+    });
+    
+    // Replay button functionality: reset preloader, replay window cleaning, then show content again
     const replayBtn = document.getElementById('replayBtn');
     if (replayBtn) {
         replayBtn.addEventListener('click', () => {
-            replayAnimation();
+            // Clear any ongoing timers
+            if (animationTimer) clearTimeout(animationTimer);
+            cleaningFinished = false;
+            
+            // Hide main content if visible
+            mainContent.classList.remove('visible');
+            
+            // Reset preloader visibility
+            preloader.classList.remove('hide');
+            
+            // Force reset of all stain visuals
+            stains.forEach(stain => {
+                stain.style.display = 'block';
+                stain.style.opacity = '1';
+                stain.style.transform = 'scale(1)';
+            });
+            
+            // Reset shine
+            cleanShine.style.opacity = '0';
+            
+            // Reset status message
+            statusMsgSpan.innerHTML = '🧼 Wiping away dirt...';
+            
+            // Re-trigger cleaning sequence
+            runCleaningSequence();
         });
     }
-
-    // Edge: if the user wants to see the preloader again but we also ensure that 
-    // the preloader hides if clicked outside? Not needed, but nice touch: double-check that 
-    // after preloader hides, it won't reappear on resize.
-
-    // Bonus: Add small hover effect for window demonstration (just for delight)
-    const windowFrame = document.querySelector('.window-frame');
-    if (windowFrame) {
-        windowFrame.addEventListener('mouseenter', () => {
-            // extra sparkle creation (just for fun, but not necessary)
-            const extraSpark = document.createElement('div');
-            extraSpark.textContent = '✨';
-            extraSpark.style.position = 'absolute';
-            extraSpark.style.fontSize = '1.8rem';
-            extraSpark.style.left = '50%';
-            extraSpark.style.top = '30%';
-            extraSpark.style.pointerEvents = 'none';
-            extraSpark.style.animation = 'twinkle 0.6s ease-out forwards';
-            extraSpark.style.opacity = '1';
-            windowFrame.appendChild(extraSpark);
-            setTimeout(() => extraSpark.remove(), 600);
-        });
-    }
-
-    // Also add a small message to console to show it's prototype
-    console.log('🎉 Preloader prototype with window cleaning, leaf float & sparkle — ready to adapt to your main site!');
+    
+    // Optional: handle any accidental edge cases for a polished feel
+    // Ensure that on window resize or anything else, preloader remains centered
+    console.log('Window cleaner prototype ready — stains disappear as wiper moves, then page appears!');
 </script>
 
-<!-- Additional style for extra shine on replay / ensure leaf animation consistent -->
 <style>
-    /* Ensure leaf-icon moves smoothly */
-    .leaf-icon {
-        transition: transform 0.2s;
+    /* Extra polish to make the stains look like smoke/dirt */
+    .stain {
+        box-shadow: 0 0 12px rgba(0,0,0,0.2);
+        transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease;
     }
-    .window-frame:hover .wiper {
-        animation-duration: 1s;
-        opacity: 0.9;
+    .cleaning-tool {
+        background: linear-gradient(120deg, #88a072, #5e7a4a);
+        border-radius: 30px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
-    /* little extra cleaning vibe on glass */
-    .window-glass {
-        transition: backdrop-filter 0.3s;
+    .window-frame {
+        transition: box-shadow 0.2s;
     }
-    .window-frame:hover .window-glass {
-        backdrop-filter: blur(0px);
-        background: radial-gradient(circle at 40% 50%, rgba(210,220,170,0.2), rgba(160,170,120,0.1));
+    .window-frame:hover {
+        box-shadow: 0 18px 35px rgba(90, 111, 74, 0.3);
     }
-    /* makes sparkles more lively */
-    .sparkle {
-        background: #ffe48f;
-        box-shadow: 0 0 8px gold;
+    /* Slight glass reflection effect */
+    .window-glass::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -20%;
+        width: 60%;
+        height: 100%;
+        background: linear-gradient(90deg, rgba(255,255,245,0.2), transparent);
+        transform: skewX(-15deg);
+        pointer-events: none;
     }
-    @keyframes leafFloat {
-        0% { transform: translateY(0px) rotate(0deg) scale(1); }
-        50% { transform: translateY(-12px) rotate(6deg) scale(1.05); }
-        100% { transform: translateY(0px) rotate(0deg) scale(1); }
+    .clean-shine {
+        background: radial-gradient(circle at 30% 40%, rgba(255, 250, 180, 0.6), transparent 80%);
+        mix-blend-mode: overlay;
+    }
+    .loading-status span {
+        font-weight: 500;
+    }
+    /* Ensure window is responsive on smaller screens */
+    @media (max-width: 550px) {
+        .window-frame {
+            width: 260px;
+            height: 260px;
+        }
+        .stain-1 { width: 55px; height: 55px; }
+        .stain-2 { width: 70px; height: 70px; }
+        .stain-3 { width: 45px; height: 45px; }
+        .stain-4 { width: 65px; height: 65px; }
+        .stain-5 { width: 40px; height: 40px; }
+        .stain-6 { width: 50px; height: 50px; }
+        .stain-7 { width: 45px; height: 45px; }
+        .cleaning-tool {
+            height: 28px;
+        }
+        .animation-container {
+            padding: 1.2rem 1.5rem;
+        }
     }
 </style>
-
 </body>
 </html>
